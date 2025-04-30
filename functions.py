@@ -1,17 +1,39 @@
 import string, os
 from constants import SEED, TYPE_RANGES, MESSAGE_TYPES, MIN, MAX, RAND
 
-def write_message(mav, output_dir, index, msg_type, msg):
-    file_path = os.path.join(output_dir, f"seed_{index+1}_{msg_type}.bin")
+def write_message(mav, output_dir, index, msg_type, val_type, msg):
+    file_path = os.path.join(output_dir, f"seed_{index+1}_{msg_type}_{val_type}.bin")
     with open(file_path, "wb") as f:
         f.write(msg.pack(mav))
-    print(f"Saved {msg_type} to {file_path}")
+    print(f"Saved {msg_type} to {file_path} ({msg})")
 
 
 def value_of_type(type_name, val_type, rng, lower=None, upper=None):
+    # return random value in valid range
     if val_type == RAND:
         return random_value_of_type(type_name, rng, lower, upper)
-    # elif val_type == MAX:
+    # return max from data type or upper bound
+    elif val_type == MAX:
+        if type_name in TYPE_RANGES and upper is None:
+            range = TYPE_RANGES[type_name]
+            return range[MAX]
+        elif upper is not None:
+            return upper
+        else: 
+            raise ValueError(f"Bad type and bound passed")
+
+    # return min from data type or lower bound
+    elif val_type == MIN:
+        if type_name in TYPE_RANGES and lower is None:
+            range = TYPE_RANGES[type_name]
+            return range[MIN]
+        elif lower is not None:
+            return lower
+        else: 
+            raise ValueError(f"Bad type and bound passed")
+
+        
+
         
 
 def random_value_of_type(type_name, rng, lower=None, upper=None):
@@ -31,39 +53,27 @@ def random_value_of_type(type_name, rng, lower=None, upper=None):
 
     int_0_to_50 = random_value_of_type('int', 0, 50)
     """
-  
-    if type_name == "float":
-        if not lower and not upper:
-            return rng.uniform(-3.4028235e38, 3.4028235e38)
-        else:
-            return rng.uniform(lower, upper)
+
     
-    if type_name == "int":
-        if not lower and not upper:
-            raise ValueError(f"Int bounds not provided")
-        else:
+    if lower is not None and upper is not None:
+        if (type_name == "int"):
             return rng.randint(lower, upper)
+        elif (type_name == "float"):
+            return rng.uniform(lower, upper)
+        else:
+            raise ValueError(f"Unsupported type/bound combination: {type_name}, {lower}, {upper}")
+    elif type_name  in TYPE_RANGES:
+        range = TYPE_RANGES[type_name]
 
-    if type_name not in TYPE_RANGES:
-        raise ValueError(f"Unsupported type: {type_name}")
-
-    ctype = TYPE_RANGES[type_name]
-    if type_name.startswith('u'):  # Unsigned types
-        return rng.randint(0, ctype(-1).value)
+        if type_name == "float":
+            return rng.uniform(range[0], range[1])
+        else:
+            return rng.randint(range[0], range[1])
     else:
-        if type_name == 'int64_t':
-            min_val = -2**63
-            max_val = 2**63 - 1
-        elif type_name == 'int32_t':
-            min_val = -2**31
-            max_val = 2**31 - 1
-        elif type_name == 'int16_t':
-            min_val = -2**15
-            max_val = 2**15 - 1
-        elif type_name == 'int8_t':
-            min_val = -2**7
-            max_val = 2**7 - 1
-        return rng.randint(min_val, max_val)
+        raise ValueError(f"Unsupported type/bound combination: {type_name}, {lower}, {upper}")
+
+ 
+
 
 def random_string(max_length, rng):
     """

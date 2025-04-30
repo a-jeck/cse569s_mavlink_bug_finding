@@ -1,5 +1,7 @@
 # my stuff left over
 old/
+input/
+minimized_input/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

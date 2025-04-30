@@ -4,14 +4,15 @@ SEED = 45
 MIN, MAX, RAND = 0, 1, 2
 
 TYPE_RANGES = {
-    'uint64_t': ctypes.c_uint64,
-    'int64_t': ctypes.c_int64,
-    'uint32_t': ctypes.c_uint32,
-    'int32_t': ctypes.c_int32,
-    'uint16_t': ctypes.c_uint16,
-    'int16_t': ctypes.c_int16,
-    'uint8_t': ctypes.c_uint8,
-    'int8_t': ctypes.c_int8,
+    'uint64_t': [0, 2**64 - 1],  # unsigned 64-bit integer: 0 to 18,446,744,073,709,551,615
+    'int64_t': [-2**63, 2**63 - 1],  # signed 64-bit integer: -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807
+    'uint32_t': [0, 2**32 - 1],  # unsigned 32-bit integer: 0 to 4,294,967,295
+    'int32_t': [-2**31, 2**31 - 1],  # signed 32-bit integer: -2,147,483,648 to 2,147,483,647
+    'uint16_t': [0, 2**16 - 1],  # unsigned 16-bit integer: 0 to 65,535
+    'int16_t': [-2**15, 2**15 - 1],  # signed 16-bit integer: -32,768 to 32,767
+    'uint8_t': [0, 2**8 - 1],  # unsigned 8-bit integer: 0 to 255
+    'int8_t': [-2**7, 2**7 - 1],  # signed 8-bit integer: -128 to 127
+    'float' : [-3.4028235e38, 3.4028235e38] # 32-bit floating point (IEEE 754): approx -3.4e38 to 3.4e38
 }
 
 MESSAGE_TYPES = [

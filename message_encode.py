@@ -1625,6 +1625,19 @@ def create_message(mav, val_type, rng, msg_type):
             value_of_type('float', val_type, rng),
         )
     
+    elif msg_type == 'SETUP_SIGNING':
+        return mav.setup_signing_encode(
+            # 1) which system to target
+            value_of_type('uint8_t', val_type, rng),
+            # 2) which component on that system
+            value_of_type('uint8_t', val_type, rng),
+            # 3) the 32-byte secret key
+            [value_of_type('uint8_t', val_type, rng) for _ in range(32)],
+            # 4) the initial timestamp
+            value_of_type('uint64_t', val_type, rng)
+        )
+
+
     else:
         print(f"Message type {msg_type} not implemented")
         return None
