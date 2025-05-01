@@ -9,7 +9,7 @@ def create_message(mav, val_type, rng, msg_type):
     if msg_type == 'SYS_STATUS':
         return mav.sys_status_encode(
             value_of_type('uint32_t', val_type, rng),  
-            value_of_type('uint32_t', val_type, rng),  
+            value_of_type('uint32_t', val_type, rng),
             value_of_type('uint32_t', val_type, rng),  
             value_of_type('int', val_type, rng, 0, 1000), 
             value_of_type('uint16_t', val_type, rng),  
@@ -1641,3 +1641,5 @@ def create_message(mav, val_type, rng, msg_type):
     else:
         print(f"Message type {msg_type} not implemented")
         return None
+
+#

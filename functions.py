@@ -5,7 +5,7 @@ def write_message(mav, output_dir, index, msg_type, val_type, msg):
     file_path = os.path.join(output_dir, f"seed_{index+1}_{msg_type}_{val_type}.bin")
     with open(file_path, "wb") as f:
         f.write(msg.pack(mav))
-    print(f"Saved {msg_type} to {file_path} ({msg})")
+    print(f"Saved {msg_type} to {file_path}")
 
 
 def value_of_type(type_name, val_type, rng, lower=None, upper=None):
