@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 import sys
 
+# GIVEN THE MAVLINK COMMON MESSAGE DEFINITIONS XML, CREATE A CASE FOR EACH MESSAGE TYPE THAT DECODES IT AND THEN REPACKS IT AND SENDS IT
 def generate_cases(xml_path):
     tree = ET.parse(xml_path)
     root = tree.getroot()
@@ -29,12 +30,7 @@ def generate_cases(xml_path):
         lines.append("    }")
 
     lines.append("    default: { // generic fallback")
-    lines.append("        uint8_t buf[MAVLINK_MAX_PACKET_LEN];")
-    lines.append("        int len = mavlink_msg_to_send_buffer(buf, &msg);")
-    lines.append("        for (int ch = 0; ch < MAVLINK_COMM_NUM_BUFFERS; ch++) {")
-    lines.append("            mavlink_send_uart_bytes(ch, buf, len);")
-    lines.append("        }")
-    lines.append("        break;")
+    lines.append("        printf('%s, \"Unsupported message type\n\");")
     lines.append("    }")
     lines.append("}")
 

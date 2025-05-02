@@ -3,14 +3,12 @@ import argparse
 import xml.etree.ElementTree as ET
 
 
-IN_PROG = ['LINK_NODE_STATUS', 'COMMAND_CANCEL', 'ESC_INFO', 'ESC_STATUS', 'ORBIT_EXECUTION_STATUS', 'TIME_ESTIMATE_TO_TARGETS','ONBOARD_COMPUTER_STATUS', 'COMPONENT_METADATA', 'EVENT', 'CURRENT_EVENT_SEQUENCE', 'REQUEST_EVENT', 'RESPONSE_EVENT_ERROR', ]
+# MESSAGE TYPES NOTSUPPORTED BY PYMAVLINK AT THIS TIME
+UNSUPPORTED = ['LINK_NODE_STATUS', 'COMMAND_CANCEL', 'ESC_INFO', 'ESC_STATUS', 'ORBIT_EXECUTION_STATUS', 'TIME_ESTIMATE_TO_TARGETS','ONBOARD_COMPUTER_STATUS', 'COMPONENT_METADATA', 'EVENT', 'CURRENT_EVENT_SEQUENCE', 'REQUEST_EVENT', 'RESPONSE_EVENT_ERROR', ]
 
+
+# GIVEN AN XML FILE (MAVLINK COMMON MESSAGE DEFINITIONS), EXTRACT ALL DATA TYPES THAT MAKE UP THE MESSAGE (EXCLUDING \EXTENSIONS)
 def create_message_switch_code(xml_file):
-    """
-    Parse the XML file and generate a Python switch-case function
-    that encodes messages based on their type and fields,
-    ignoring any <field> elements that appear after an <extensions/> tag.
-    """
     tree = ET.parse(xml_file)
     root = tree.getroot()
 
@@ -25,11 +23,9 @@ def create_message_switch_code(xml_file):
 
         func_name = name.lower()
 
-        if name in IN_PROG:
+        if name in UNSUPPORTED:
             print(name)
             continue
-        # else:
-        #     print(name)
 
         args = []
         # Gather fields until an <extensions/> tag is encountered
