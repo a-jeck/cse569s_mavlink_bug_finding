@@ -40,11 +40,21 @@ def generate_cases(xml_path):
 
     return '\n'.join(lines)
 
+
 if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        print(f"Usage: {sys.argv[0]} path/to/mavlink_definition.xml")
+    if len(sys.argv) != 3:
+        print(f"Usage: {sys.argv[0]} path/to/mavlink_definition.xml path/to/output.txt")
         sys.exit(1)
 
     xml_file = sys.argv[1]
+    output_file = sys.argv[2]
     c_code = generate_cases(xml_file)
-    print(c_code)
+
+    # Write the generated code to the specified output file
+    try:
+        with open(output_file, 'w') as f:
+            f.write(c_code)
+        print(f"Generated C cases written to {output_file}")
+    except IOError as e:
+        print(f"Error writing to {output_file}: {e}")
+        sys.exit(1)

@@ -12,14 +12,18 @@ os.makedirs(output_dir, exist_ok=True)
 mav = mavlink2.MAVLink(None)
 rng = random.Random(SEED)
 
-print(create_message(mav, MAX, rng, 'COLLISION'))
 
 
+UNSUPPORTED = ['CELLULAR_STATUS', 'CELLULAR_CONFIG', 'FUEL_STATUS', 'BATTERY_INFO', 'TIME_ESTIMATE_TO_TARGET', 'COMPONENT_INFORMATION', 'COMPONENT_INFORMATION_BASIC', 'PLAY_TUNE_V2', 'SUPPORTED_TUNES', 'AVAILABLE_MODES', 'CURRENT_MODE', 'AVAILABLE_MODES_MONITOR', 'ILLUMINATOR_STATUS']
 # Generate and save messages
-# for i, msg_type in enumerate(MESSAGE_TYPES):
-#     # rand_msg = create_message(mav, RAND, rng, msg_type)
-#     # if rand_msg:
-#     #     write_message(mav, output_dir, i, msg_type, RAND, rand_msg)
+for i, msg_type in enumerate(MESSAGE_TYPES):
+    print(msg_type)
+    if msg_type in UNSUPPORTED:
+        continue
+
+    rand_msg = create_message(mav, RAND, rng, msg_type)
+    if rand_msg:
+        write_message(mav, output_dir, i, msg_type, RAND, rand_msg)
     
 #     max_msg = create_message(mav, MAX, rng, msg_type)
 #     if max_msg:
@@ -28,4 +32,3 @@ print(create_message(mav, MAX, rng, 'COLLISION'))
 #     min_msg = create_message(mav, MIN, rng, msg_type)
 #     if min_msg:
 #         write_message(mav, output_dir, i, msg_type, MIN, min_msg)
-    

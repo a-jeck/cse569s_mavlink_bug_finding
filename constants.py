@@ -12,7 +12,8 @@ TYPE_RANGES = {
     'int16_t': [-2**15, 2**15 - 1],  # signed 16-bit integer: -32,768 to 32,767
     'uint8_t': [0, 2**8 - 1],  # unsigned 8-bit integer: 0 to 255
     'int8_t': [-2**7, 2**7 - 1],  # signed 8-bit integer: -128 to 127
-    'float' : [-3.4028235e38, 3.4028235e38] # 32-bit floating point (IEEE 754): approx -3.4e38 to 3.4e38
+    'float' : [-3.4028235e38, 3.4028235e38], # 32-bit floating point (IEEE 754): approx -3.4e38 to 3.4e38
+    'double': [-1.7976931348623157e308, 1.7976931348623157e308]  # 64-bit floating point (IEEE 754): approx -1.8e308 to 1.8e308
 }
 
 

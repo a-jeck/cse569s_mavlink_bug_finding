@@ -65,7 +65,7 @@ def random_value_of_type(type_name, rng, lower=None, upper=None):
     elif type_name  in TYPE_RANGES:
         range = TYPE_RANGES[type_name]
 
-        if type_name == "float":
+        if type_name == "float" or type_name == 'double':
             return rng.uniform(range[0], range[1])
         else:
             return rng.randint(range[0], range[1])
