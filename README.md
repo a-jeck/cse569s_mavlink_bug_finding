@@ -1,19 +1,19 @@
 
-This repo:
-generating code:
-    - generating_harness_cases: contains a script that, given MAVLINK messages in an xml, can generate a bunch of switch-case cases for increasing code coverage
-    - generating_message_encoding: contains a script that, given mavlink xml, generates a bunch of functions that can be used to generate messages of that type to use as seeds for fuzzing
+**This repo:**
+- generating code:
+  - generating_harness_cases: contains a script that, given MAVLINK messages in an xml, can generate a bunch of switch-case cases for increasing code coverage
+  - generating_message_encoding: contains a script that, given mavlink xml, generates a bunch of functions that can be used to generate messages of that type to use as seeds for fuzzing
 
-generating_seeds
-    - using results from generating_message_encoding and helper functions in function.py and constants in constants.py, generate a bunch of seeds for mavlink fuzzing
+- generating_seeds
+  - using results from generating_message_encoding and helper functions in function.py and constants in constants.py, generate a bunch of seeds for mavlink fuzzing
 
- udp_example.c: an example of the test harness using results from generating harness cases
-
-
- Mavlink message definitions:
+ - udp_example.c: an example of the test harness using results from generating harness cases
 
 
- Actually fuzzing:
+**Mavlink message definitions:**
+https://github.com/mavlink/mavlink/blob/master/message_definitions/v1.0/common.xml
+
+ **Fuzzing:**
  - clone this repo: https://github.com/WUSTL-CSPL/mavlink_fuzz_CSE569
  - place the udp_example.c file with one from this repo or one with a better harness
  - change CMakeLists.txt in examples/c (NOT the one in the first level of the repo) to the text below
