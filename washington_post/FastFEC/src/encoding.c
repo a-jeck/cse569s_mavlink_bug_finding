@@ -88,7 +88,8 @@ int iso_8859_1_to_utf_8(STRING *in, STRING *output)
       length += 2;
     }
   }
-  *out = '\0';
+  // BUG FIX #2
+  // *out = '\0';
   return length;
 }
 

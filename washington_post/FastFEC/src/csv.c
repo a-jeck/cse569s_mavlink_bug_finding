@@ -194,15 +194,15 @@ int isWhitespace(PARSE_CONTEXT *context, int position)
 
 void stripWhitespace(PARSE_CONTEXT *context)
 {
+  // BUG FIX #3
   // if (context->start >= context->end)
   //       return;
 
-  printf("Start: %d, end: %d\n", context->start, context->end);
   // Strip leading whitespace
-  // while (isWhitespace(context, context->start) && (context->start < context->end))
-  // {
-  //   (context->start)++;
-  // }
+  while (isWhitespace(context, context->start) && (context->start < context->end))
+  {
+    (context->start)++;
+  }
 
   // Strip trailing whitespace
   while (isWhitespace(context, context->end - 1) && (context->end > context->start))

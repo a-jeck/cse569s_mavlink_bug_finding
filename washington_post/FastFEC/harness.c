@@ -1,54 +1,37 @@
 #include "encoding.h"
 #include "fec.h"
-#include "cli.h"
-#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #define BUFFERSIZE 65536
 
+int main(int argc, char **argv) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <fec-file>\n", argv[0]);
+        return 1;
+    }
 
-int main(int argc, char *argv[])
-{
-  if (argc < 2) {
-    fprintf(stderr, "Usage: %s <fec-file>\n", argv[0]);
-    return 1;
-  }
-    
-  // Create fake CLI context
-  CLI_CONTEXT *cli = newCliContext();
-  cli->outputDirectory = "./csv_output"; // garbage output we don't need for fuzzing
-  cli->fecId = argv[1]; 
-  cli->fecName = argv[1]; 
-  cli->silent = 1; // dont waste time trying to print anything
-  cli->warn = 0; // dont waste time trying to print warnings
-  cli->piped = 0;
-  cli->includeFilingId = 0;
-  cli->printUrl = 0;
-  cli->shouldPrintUsage = 0;
-  cli->shouldPrintSpecifyFilingId = 0;
-  cli->shouldPrintUrlOnly = 0;
+    FILE *handle = fopen(argv[1], "rb");
+    if (!handle) {
+        perror("fopen");
+        return 1;
+    }
 
+    PERSISTENT_MEMORY_CONTEXT *pm = newPersistentMemoryContext();
 
-  // Open File
-  FILE *handle = fopen(argv[1], "rb");
-  if (!handle) {
-    perror("fopen");
-    return 1;
-  }
+    // hardcoded dummy values
+    const char *fecId      = "FUZZ123";
+    const char *outDir     = ".";        // random dir for parser to spit out csvs, useless for our testing
+    int includeFilingId    = 0;
+    int silent             = 1;          // ignore stdout
+    int warn               = 0;
 
-  // Initialize persistent memory context
-  PERSISTENT_MEMORY_CONTEXT *persistentMemory = newPersistentMemoryContext();
+    FEC_CONTEXT *fec = newFecContext(pm, (BufferRead)&readBuffer, BUFFERSIZE, NULL, BUFFERSIZE, NULL, 1, handle, fecId, outDir, includeFilingId, silent, warn);
 
-  // Initialize FEC context
-  FEC_CONTEXT *fec = newFecContext(persistentMemory, ((BufferRead)(&readBuffer)), BUFFERSIZE, NULL, BUFFERSIZE, NULL, 1, handle, cli->fecId, cli->outputDirectory, cli->includeFilingId, cli->silent, cli->warn);
+    parseFec(fec);
 
-  // Parse the fec file
-  parseFec(fec);
-
-  // Clean up
-  freeFecContext(fec);
-  freePersistentMemoryContext(persistentMemory);
-  freeCliContext(cli);
-  fclose(handle);
-
-  return 0; /* all done */
+    freeFecContext(fec);
+    freePersistentMemoryContext(pm);
+    fclose(handle);
+    return 0;
 }

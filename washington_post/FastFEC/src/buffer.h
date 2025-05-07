@@ -15,7 +15,10 @@ typedef struct buffer BUFFER;
 
 BUFFER *newBuffer(int bufferSize, BufferRead bufferRead);
 
+// Original Code
 // size_t readBuffer(char *buffer, int want, FILE *file);
+
+// Fixed Code
 size_t readBuffer(char *buffer, int want, void *data);
 
 size_t fillBuffer(BUFFER *buffer, void *data);

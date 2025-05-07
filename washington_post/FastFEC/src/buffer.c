@@ -18,10 +18,17 @@ void freeBuffer(BUFFER *buffer)
   free(buffer);
 }
 
-// size_t readBuffer(char *buffer, int want, FILE *file)
+// BUG FIX #1
+
+// ORIGINAL CODE:
+// size_t readBuffer(char *buffer, int want, FILE *file) 
+// {
+//   return fread(buffer, 1, want, (FILE *)file);
+// }
+  
+// FIXED CODE:
 size_t readBuffer(char *buffer, int want, void *data)
 {
-  // return fread(buffer, 1, want, file);
   return fread(buffer, 1, want, (FILE *)data);
 }
 
