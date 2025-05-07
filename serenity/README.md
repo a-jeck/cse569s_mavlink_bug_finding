@@ -23,3 +23,4 @@ Run
 then 
 `<path-to-serenity>/Meta/Lagom/Build/lagom-fuzzers/bin/FuzzELF -artifact_prefix=crashes/ <path-to-unzipped-corpus>`
 
+Crashing inputs will appear in ./crashes relative to wherever you're executing from.
