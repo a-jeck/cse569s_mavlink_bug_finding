@@ -1,0 +1,11 @@
+pylint
+tox
+autopep8
+pytest
+pytest-cov
+pytest-xdist
+pytest-mock
+black
+isort
+ziglang==0.11.0
+-e .

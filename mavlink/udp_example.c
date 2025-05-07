@@ -1,0 +1,1648 @@
+#include <mavlink/mavlink_types.h>
+extern mavlink_system_t mavlink_system;
+mavlink_system_t mavlink_system = { 1, 1 };
+static inline void comm_send_ch(mavlink_channel_t chan, uint8_t byte)
+{
+    (void)chan;   /* ignore output when fuzzing; we only care about parse */
+    (void)byte;
+}
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <string.h>
+
+#define MAVLINK_USE_CONVENIENCE_FUNCTIONS
+#include <mavlink/common/mavlink.h>
+
+
+#define BUFFER_SIZE 512
+
+int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
+    mavlink_message_t msg;
+    mavlink_status_t status;
+
+    for (size_t i = 0; i < size; i++) {
+        if (mavlink_parse_char(MAVLINK_COMM_0, data[i], &msg, &status)) {
+            switch (msg.msgid) {
+                case MAVLINK_MSG_ID_SYS_STATUS: {
+                    mavlink_sys_status_t payload;
+                    mavlink_msg_sys_status_decode(&msg, &payload);
+                    mavlink_msg_sys_status_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.onboard_control_sensors_present, payload.onboard_control_sensors_enabled, payload.onboard_control_sensors_health, payload.load, payload.voltage_battery, payload.current_battery, payload.battery_remaining, payload.drop_rate_comm, payload.errors_comm, payload.errors_count1, payload.errors_count2, payload.errors_count3, payload.errors_count4, payload.onboard_control_sensors_present_extended, payload.onboard_control_sensors_enabled_extended, payload.onboard_control_sensors_health_extended);
+                    mavlink_msg_sys_status_send(MAVLINK_COMM_0, payload.onboard_control_sensors_present, payload.onboard_control_sensors_enabled, payload.onboard_control_sensors_health, payload.load, payload.voltage_battery, payload.current_battery, payload.battery_remaining, payload.drop_rate_comm, payload.errors_comm, payload.errors_count1, payload.errors_count2, payload.errors_count3, payload.errors_count4, payload.onboard_control_sensors_present_extended, payload.onboard_control_sensors_enabled_extended, payload.onboard_control_sensors_health_extended);
+                    break;
+                }
+                case MAVLINK_MSG_ID_SYSTEM_TIME: {
+                    mavlink_system_time_t payload;
+                    mavlink_msg_system_time_decode(&msg, &payload);
+                    mavlink_msg_system_time_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_unix_usec, payload.time_boot_ms);
+                    mavlink_msg_system_time_send(MAVLINK_COMM_0, payload.time_unix_usec, payload.time_boot_ms);
+                    break;
+                }
+                case MAVLINK_MSG_ID_PING: {
+                    mavlink_ping_t payload;
+                    mavlink_msg_ping_decode(&msg, &payload);
+                    mavlink_msg_ping_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.seq, payload.target_system, payload.target_component);
+                    mavlink_msg_ping_send(MAVLINK_COMM_0, payload.time_usec, payload.seq, payload.target_system, payload.target_component);
+                    break;
+                }
+                case MAVLINK_MSG_ID_CHANGE_OPERATOR_CONTROL: {
+                    mavlink_change_operator_control_t payload;
+                    mavlink_msg_change_operator_control_decode(&msg, &payload);
+                    mavlink_msg_change_operator_control_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.control_request, payload.version, payload.passkey);
+                    mavlink_msg_change_operator_control_send(MAVLINK_COMM_0, payload.target_system, payload.control_request, payload.version, payload.passkey);
+                    break;
+                }
+                case MAVLINK_MSG_ID_CHANGE_OPERATOR_CONTROL_ACK: {
+                    mavlink_change_operator_control_ack_t payload;
+                    mavlink_msg_change_operator_control_ack_decode(&msg, &payload);
+                    mavlink_msg_change_operator_control_ack_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.gcs_system_id, payload.control_request, payload.ack);
+                    mavlink_msg_change_operator_control_ack_send(MAVLINK_COMM_0, payload.gcs_system_id, payload.control_request, payload.ack);
+                    break;
+                }
+                case MAVLINK_MSG_ID_AUTH_KEY: {
+                    mavlink_auth_key_t payload;
+                    mavlink_msg_auth_key_decode(&msg, &payload);
+                    mavlink_msg_auth_key_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.key);
+                    mavlink_msg_auth_key_send(MAVLINK_COMM_0, payload.key);
+                    break;
+                }
+                case MAVLINK_MSG_ID_LINK_NODE_STATUS: {
+                    mavlink_link_node_status_t payload;
+                    mavlink_msg_link_node_status_decode(&msg, &payload);
+                    mavlink_msg_link_node_status_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.timestamp, payload.tx_buf, payload.rx_buf, payload.tx_rate, payload.rx_rate, payload.rx_parse_err, payload.tx_overflows, payload.rx_overflows, payload.messages_sent, payload.messages_received, payload.messages_lost);
+                    mavlink_msg_link_node_status_send(MAVLINK_COMM_0, payload.timestamp, payload.tx_buf, payload.rx_buf, payload.tx_rate, payload.rx_rate, payload.rx_parse_err, payload.tx_overflows, payload.rx_overflows, payload.messages_sent, payload.messages_received, payload.messages_lost);
+                    break;
+                }
+                case MAVLINK_MSG_ID_SET_MODE: {
+                    mavlink_set_mode_t payload;
+                    mavlink_msg_set_mode_decode(&msg, &payload);
+                    mavlink_msg_set_mode_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.base_mode, payload.custom_mode);
+                    mavlink_msg_set_mode_send(MAVLINK_COMM_0, payload.target_system, payload.base_mode, payload.custom_mode);
+                    break;
+                }
+                case MAVLINK_MSG_ID_PARAM_REQUEST_READ: {
+                    mavlink_param_request_read_t payload;
+                    mavlink_msg_param_request_read_decode(&msg, &payload);
+                    mavlink_msg_param_request_read_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.param_id, payload.param_index);
+                    mavlink_msg_param_request_read_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.param_id, payload.param_index);
+                    break;
+                }
+                case MAVLINK_MSG_ID_PARAM_REQUEST_LIST: {
+                    mavlink_param_request_list_t payload;
+                    mavlink_msg_param_request_list_decode(&msg, &payload);
+                    mavlink_msg_param_request_list_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component);
+                    mavlink_msg_param_request_list_send(MAVLINK_COMM_0, payload.target_system, payload.target_component);
+                    break;
+                }
+                case MAVLINK_MSG_ID_PARAM_VALUE: {
+                    mavlink_param_value_t payload;
+                    mavlink_msg_param_value_decode(&msg, &payload);
+                    mavlink_msg_param_value_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.param_id, payload.param_value, payload.param_type, payload.param_count, payload.param_index);
+                    mavlink_msg_param_value_send(MAVLINK_COMM_0, payload.param_id, payload.param_value, payload.param_type, payload.param_count, payload.param_index);
+                    break;
+                }
+                case MAVLINK_MSG_ID_PARAM_SET: {
+                    mavlink_param_set_t payload;
+                    mavlink_msg_param_set_decode(&msg, &payload);
+                    mavlink_msg_param_set_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.param_id, payload.param_value, payload.param_type);
+                    mavlink_msg_param_set_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.param_id, payload.param_value, payload.param_type);
+                    break;
+                }
+                case MAVLINK_MSG_ID_GPS_RAW_INT: {
+                    mavlink_gps_raw_int_t payload;
+                    mavlink_msg_gps_raw_int_decode(&msg, &payload);
+                    mavlink_msg_gps_raw_int_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.fix_type, payload.lat, payload.lon, payload.alt, payload.eph, payload.epv, payload.vel, payload.cog, payload.satellites_visible, payload.alt_ellipsoid, payload.h_acc, payload.v_acc, payload.vel_acc, payload.hdg_acc, payload.yaw);
+                    mavlink_msg_gps_raw_int_send(MAVLINK_COMM_0, payload.time_usec, payload.fix_type, payload.lat, payload.lon, payload.alt, payload.eph, payload.epv, payload.vel, payload.cog, payload.satellites_visible, payload.alt_ellipsoid, payload.h_acc, payload.v_acc, payload.vel_acc, payload.hdg_acc, payload.yaw);
+                    break;
+                }
+                case MAVLINK_MSG_ID_GPS_STATUS: {
+                    mavlink_gps_status_t payload;
+                    mavlink_msg_gps_status_decode(&msg, &payload);
+                    mavlink_msg_gps_status_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.satellites_visible, payload.satellite_prn, payload.satellite_used, payload.satellite_elevation, payload.satellite_azimuth, payload.satellite_snr);
+                    mavlink_msg_gps_status_send(MAVLINK_COMM_0, payload.satellites_visible, payload.satellite_prn, payload.satellite_used, payload.satellite_elevation, payload.satellite_azimuth, payload.satellite_snr);
+                    break;
+                }
+                case MAVLINK_MSG_ID_SCALED_IMU: {
+                    mavlink_scaled_imu_t payload;
+                    mavlink_msg_scaled_imu_decode(&msg, &payload);
+                    mavlink_msg_scaled_imu_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.xacc, payload.yacc, payload.zacc, payload.xgyro, payload.ygyro, payload.zgyro, payload.xmag, payload.ymag, payload.zmag, payload.temperature);
+                    mavlink_msg_scaled_imu_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.xacc, payload.yacc, payload.zacc, payload.xgyro, payload.ygyro, payload.zgyro, payload.xmag, payload.ymag, payload.zmag, payload.temperature);
+                    break;
+                }
+                case MAVLINK_MSG_ID_RAW_IMU: {
+                    mavlink_raw_imu_t payload;
+                    mavlink_msg_raw_imu_decode(&msg, &payload);
+                    mavlink_msg_raw_imu_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.xacc, payload.yacc, payload.zacc, payload.xgyro, payload.ygyro, payload.zgyro, payload.xmag, payload.ymag, payload.zmag, payload.id, payload.temperature);
+                    mavlink_msg_raw_imu_send(MAVLINK_COMM_0, payload.time_usec, payload.xacc, payload.yacc, payload.zacc, payload.xgyro, payload.ygyro, payload.zgyro, payload.xmag, payload.ymag, payload.zmag, payload.id, payload.temperature);
+                    break;
+                }
+                case MAVLINK_MSG_ID_RAW_PRESSURE: {
+                    mavlink_raw_pressure_t payload;
+                    mavlink_msg_raw_pressure_decode(&msg, &payload);
+                    mavlink_msg_raw_pressure_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.press_abs, payload.press_diff1, payload.press_diff2, payload.temperature);
+                    mavlink_msg_raw_pressure_send(MAVLINK_COMM_0, payload.time_usec, payload.press_abs, payload.press_diff1, payload.press_diff2, payload.temperature);
+                    break;
+                }
+                case MAVLINK_MSG_ID_SCALED_PRESSURE: {
+                    mavlink_scaled_pressure_t payload;
+                    mavlink_msg_scaled_pressure_decode(&msg, &payload);
+                    mavlink_msg_scaled_pressure_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.press_abs, payload.press_diff, payload.temperature, payload.temperature_press_diff);
+                    mavlink_msg_scaled_pressure_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.press_abs, payload.press_diff, payload.temperature, payload.temperature_press_diff);
+                    break;
+                }
+                case MAVLINK_MSG_ID_ATTITUDE: {
+                    mavlink_attitude_t payload;
+                    mavlink_msg_attitude_decode(&msg, &payload);
+                    mavlink_msg_attitude_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.roll, payload.pitch, payload.yaw, payload.rollspeed, payload.pitchspeed, payload.yawspeed);
+                    mavlink_msg_attitude_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.roll, payload.pitch, payload.yaw, payload.rollspeed, payload.pitchspeed, payload.yawspeed);
+                    break;
+                }
+                case MAVLINK_MSG_ID_ATTITUDE_QUATERNION: {
+                    mavlink_attitude_quaternion_t payload;
+                    mavlink_msg_attitude_quaternion_decode(&msg, &payload);
+                    mavlink_msg_attitude_quaternion_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.q1, payload.q2, payload.q3, payload.q4, payload.rollspeed, payload.pitchspeed, payload.yawspeed, payload.repr_offset_q);
+                    mavlink_msg_attitude_quaternion_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.q1, payload.q2, payload.q3, payload.q4, payload.rollspeed, payload.pitchspeed, payload.yawspeed, payload.repr_offset_q);
+                    break;
+                }
+                case MAVLINK_MSG_ID_LOCAL_POSITION_NED: {
+                    mavlink_local_position_ned_t payload;
+                    mavlink_msg_local_position_ned_decode(&msg, &payload);
+                    mavlink_msg_local_position_ned_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.x, payload.y, payload.z, payload.vx, payload.vy, payload.vz);
+                    mavlink_msg_local_position_ned_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.x, payload.y, payload.z, payload.vx, payload.vy, payload.vz);
+                    break;
+                }
+                case MAVLINK_MSG_ID_GLOBAL_POSITION_INT: {
+                    mavlink_global_position_int_t payload;
+                    mavlink_msg_global_position_int_decode(&msg, &payload);
+                    mavlink_msg_global_position_int_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.lat, payload.lon, payload.alt, payload.relative_alt, payload.vx, payload.vy, payload.vz, payload.hdg);
+                    mavlink_msg_global_position_int_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.lat, payload.lon, payload.alt, payload.relative_alt, payload.vx, payload.vy, payload.vz, payload.hdg);
+                    break;
+                }
+                case MAVLINK_MSG_ID_RC_CHANNELS_SCALED: {
+                    mavlink_rc_channels_scaled_t payload;
+                    mavlink_msg_rc_channels_scaled_decode(&msg, &payload);
+                    mavlink_msg_rc_channels_scaled_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.port, payload.chan1_scaled, payload.chan2_scaled, payload.chan3_scaled, payload.chan4_scaled, payload.chan5_scaled, payload.chan6_scaled, payload.chan7_scaled, payload.chan8_scaled, payload.rssi);
+                    mavlink_msg_rc_channels_scaled_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.port, payload.chan1_scaled, payload.chan2_scaled, payload.chan3_scaled, payload.chan4_scaled, payload.chan5_scaled, payload.chan6_scaled, payload.chan7_scaled, payload.chan8_scaled, payload.rssi);
+                    break;
+                }
+                case MAVLINK_MSG_ID_RC_CHANNELS_RAW: {
+                    mavlink_rc_channels_raw_t payload;
+                    mavlink_msg_rc_channels_raw_decode(&msg, &payload);
+                    mavlink_msg_rc_channels_raw_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.port, payload.chan1_raw, payload.chan2_raw, payload.chan3_raw, payload.chan4_raw, payload.chan5_raw, payload.chan6_raw, payload.chan7_raw, payload.chan8_raw, payload.rssi);
+                    mavlink_msg_rc_channels_raw_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.port, payload.chan1_raw, payload.chan2_raw, payload.chan3_raw, payload.chan4_raw, payload.chan5_raw, payload.chan6_raw, payload.chan7_raw, payload.chan8_raw, payload.rssi);
+                    break;
+                }
+                case MAVLINK_MSG_ID_SERVO_OUTPUT_RAW: {
+                    mavlink_servo_output_raw_t payload;
+                    mavlink_msg_servo_output_raw_decode(&msg, &payload);
+                    mavlink_msg_servo_output_raw_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.port, payload.servo1_raw, payload.servo2_raw, payload.servo3_raw, payload.servo4_raw, payload.servo5_raw, payload.servo6_raw, payload.servo7_raw, payload.servo8_raw, payload.servo9_raw, payload.servo10_raw, payload.servo11_raw, payload.servo12_raw, payload.servo13_raw, payload.servo14_raw, payload.servo15_raw, payload.servo16_raw);
+                    mavlink_msg_servo_output_raw_send(MAVLINK_COMM_0, payload.time_usec, payload.port, payload.servo1_raw, payload.servo2_raw, payload.servo3_raw, payload.servo4_raw, payload.servo5_raw, payload.servo6_raw, payload.servo7_raw, payload.servo8_raw, payload.servo9_raw, payload.servo10_raw, payload.servo11_raw, payload.servo12_raw, payload.servo13_raw, payload.servo14_raw, payload.servo15_raw, payload.servo16_raw);
+                    break;
+                }
+                case MAVLINK_MSG_ID_MISSION_REQUEST_PARTIAL_LIST: {
+                    mavlink_mission_request_partial_list_t payload;
+                    mavlink_msg_mission_request_partial_list_decode(&msg, &payload);
+                    mavlink_msg_mission_request_partial_list_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.start_index, payload.end_index, payload.mission_type);
+                    mavlink_msg_mission_request_partial_list_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.start_index, payload.end_index, payload.mission_type);
+                    break;
+                }
+                case MAVLINK_MSG_ID_MISSION_WRITE_PARTIAL_LIST: {
+                    mavlink_mission_write_partial_list_t payload;
+                    mavlink_msg_mission_write_partial_list_decode(&msg, &payload);
+                    mavlink_msg_mission_write_partial_list_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.start_index, payload.end_index, payload.mission_type);
+                    mavlink_msg_mission_write_partial_list_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.start_index, payload.end_index, payload.mission_type);
+                    break;
+                }
+                case MAVLINK_MSG_ID_MISSION_ITEM: {
+                    mavlink_mission_item_t payload;
+                    mavlink_msg_mission_item_decode(&msg, &payload);
+                    mavlink_msg_mission_item_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.seq, payload.frame, payload.command, payload.current, payload.autocontinue, payload.param1, payload.param2, payload.param3, payload.param4, payload.x, payload.y, payload.z, payload.mission_type);
+                    mavlink_msg_mission_item_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.seq, payload.frame, payload.command, payload.current, payload.autocontinue, payload.param1, payload.param2, payload.param3, payload.param4, payload.x, payload.y, payload.z, payload.mission_type);
+                    break;
+                }
+                case MAVLINK_MSG_ID_MISSION_REQUEST: {
+                    mavlink_mission_request_t payload;
+                    mavlink_msg_mission_request_decode(&msg, &payload);
+                    mavlink_msg_mission_request_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.seq, payload.mission_type);
+                    mavlink_msg_mission_request_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.seq, payload.mission_type);
+                    break;
+                }
+                case MAVLINK_MSG_ID_MISSION_SET_CURRENT: {
+                    mavlink_mission_set_current_t payload;
+                    mavlink_msg_mission_set_current_decode(&msg, &payload);
+                    mavlink_msg_mission_set_current_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.seq);
+                    mavlink_msg_mission_set_current_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.seq);
+                    break;
+                }
+                case MAVLINK_MSG_ID_MISSION_CURRENT: {
+                    mavlink_mission_current_t payload;
+                    mavlink_msg_mission_current_decode(&msg, &payload);
+                    mavlink_msg_mission_current_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.seq, payload.total, payload.mission_state, payload.mission_mode, payload.mission_id, payload.fence_id, payload.rally_points_id);
+                    mavlink_msg_mission_current_send(MAVLINK_COMM_0, payload.seq, payload.total, payload.mission_state, payload.mission_mode, payload.mission_id, payload.fence_id, payload.rally_points_id);
+                    break;
+                }
+                case MAVLINK_MSG_ID_MISSION_REQUEST_LIST: {
+                    mavlink_mission_request_list_t payload;
+                    mavlink_msg_mission_request_list_decode(&msg, &payload);
+                    mavlink_msg_mission_request_list_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.mission_type);
+                    mavlink_msg_mission_request_list_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.mission_type);
+                    break;
+                }
+                case MAVLINK_MSG_ID_MISSION_COUNT: {
+                    mavlink_mission_count_t payload;
+                    mavlink_msg_mission_count_decode(&msg, &payload);
+                    mavlink_msg_mission_count_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.count, payload.mission_type, payload.opaque_id);
+                    mavlink_msg_mission_count_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.count, payload.mission_type, payload.opaque_id);
+                    break;
+                }
+                case MAVLINK_MSG_ID_MISSION_CLEAR_ALL: {
+                    mavlink_mission_clear_all_t payload;
+                    mavlink_msg_mission_clear_all_decode(&msg, &payload);
+                    mavlink_msg_mission_clear_all_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.mission_type);
+                    mavlink_msg_mission_clear_all_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.mission_type);
+                    break;
+                }
+                case MAVLINK_MSG_ID_MISSION_ITEM_REACHED: {
+                    mavlink_mission_item_reached_t payload;
+                    mavlink_msg_mission_item_reached_decode(&msg, &payload);
+                    mavlink_msg_mission_item_reached_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.seq);
+                    mavlink_msg_mission_item_reached_send(MAVLINK_COMM_0, payload.seq);
+                    break;
+                }
+                case MAVLINK_MSG_ID_MISSION_ACK: {
+                    mavlink_mission_ack_t payload;
+                    mavlink_msg_mission_ack_decode(&msg, &payload);
+                    mavlink_msg_mission_ack_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.type, payload.mission_type, payload.opaque_id);
+                    mavlink_msg_mission_ack_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.type, payload.mission_type, payload.opaque_id);
+                    break;
+                }
+                case MAVLINK_MSG_ID_SET_GPS_GLOBAL_ORIGIN: {
+                    mavlink_set_gps_global_origin_t payload;
+                    mavlink_msg_set_gps_global_origin_decode(&msg, &payload);
+                    mavlink_msg_set_gps_global_origin_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.latitude, payload.longitude, payload.altitude, payload.time_usec);
+                    mavlink_msg_set_gps_global_origin_send(MAVLINK_COMM_0, payload.target_system, payload.latitude, payload.longitude, payload.altitude, payload.time_usec);
+                    break;
+                }
+                case MAVLINK_MSG_ID_GPS_GLOBAL_ORIGIN: {
+                    mavlink_gps_global_origin_t payload;
+                    mavlink_msg_gps_global_origin_decode(&msg, &payload);
+                    mavlink_msg_gps_global_origin_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.latitude, payload.longitude, payload.altitude, payload.time_usec);
+                    mavlink_msg_gps_global_origin_send(MAVLINK_COMM_0, payload.latitude, payload.longitude, payload.altitude, payload.time_usec);
+                    break;
+                }
+                case MAVLINK_MSG_ID_PARAM_MAP_RC: {
+                    mavlink_param_map_rc_t payload;
+                    mavlink_msg_param_map_rc_decode(&msg, &payload);
+                    mavlink_msg_param_map_rc_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.param_id, payload.param_index, payload.parameter_rc_channel_index, payload.param_value0, payload.scale, payload.param_value_min, payload.param_value_max);
+                    mavlink_msg_param_map_rc_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.param_id, payload.param_index, payload.parameter_rc_channel_index, payload.param_value0, payload.scale, payload.param_value_min, payload.param_value_max);
+                    break;
+                }
+                case MAVLINK_MSG_ID_MISSION_REQUEST_INT: {
+                    mavlink_mission_request_int_t payload;
+                    mavlink_msg_mission_request_int_decode(&msg, &payload);
+                    mavlink_msg_mission_request_int_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.seq, payload.mission_type);
+                    mavlink_msg_mission_request_int_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.seq, payload.mission_type);
+                    break;
+                }
+                case MAVLINK_MSG_ID_SAFETY_SET_ALLOWED_AREA: {
+                    mavlink_safety_set_allowed_area_t payload;
+                    mavlink_msg_safety_set_allowed_area_decode(&msg, &payload);
+                    mavlink_msg_safety_set_allowed_area_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.frame, payload.p1x, payload.p1y, payload.p1z, payload.p2x, payload.p2y, payload.p2z);
+                    mavlink_msg_safety_set_allowed_area_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.frame, payload.p1x, payload.p1y, payload.p1z, payload.p2x, payload.p2y, payload.p2z);
+                    break;
+                }
+                case MAVLINK_MSG_ID_SAFETY_ALLOWED_AREA: {
+                    mavlink_safety_allowed_area_t payload;
+                    mavlink_msg_safety_allowed_area_decode(&msg, &payload);
+                    mavlink_msg_safety_allowed_area_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.frame, payload.p1x, payload.p1y, payload.p1z, payload.p2x, payload.p2y, payload.p2z);
+                    mavlink_msg_safety_allowed_area_send(MAVLINK_COMM_0, payload.frame, payload.p1x, payload.p1y, payload.p1z, payload.p2x, payload.p2y, payload.p2z);
+                    break;
+                }
+                case MAVLINK_MSG_ID_ATTITUDE_QUATERNION_COV: {
+                    mavlink_attitude_quaternion_cov_t payload;
+                    mavlink_msg_attitude_quaternion_cov_decode(&msg, &payload);
+                    mavlink_msg_attitude_quaternion_cov_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.q, payload.rollspeed, payload.pitchspeed, payload.yawspeed, payload.covariance);
+                    mavlink_msg_attitude_quaternion_cov_send(MAVLINK_COMM_0, payload.time_usec, payload.q, payload.rollspeed, payload.pitchspeed, payload.yawspeed, payload.covariance);
+                    break;
+                }
+                case MAVLINK_MSG_ID_NAV_CONTROLLER_OUTPUT: {
+                    mavlink_nav_controller_output_t payload;
+                    mavlink_msg_nav_controller_output_decode(&msg, &payload);
+                    mavlink_msg_nav_controller_output_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.nav_roll, payload.nav_pitch, payload.nav_bearing, payload.target_bearing, payload.wp_dist, payload.alt_error, payload.aspd_error, payload.xtrack_error);
+                    mavlink_msg_nav_controller_output_send(MAVLINK_COMM_0, payload.nav_roll, payload.nav_pitch, payload.nav_bearing, payload.target_bearing, payload.wp_dist, payload.alt_error, payload.aspd_error, payload.xtrack_error);
+                    break;
+                }
+                case MAVLINK_MSG_ID_GLOBAL_POSITION_INT_COV: {
+                    mavlink_global_position_int_cov_t payload;
+                    mavlink_msg_global_position_int_cov_decode(&msg, &payload);
+                    mavlink_msg_global_position_int_cov_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.estimator_type, payload.lat, payload.lon, payload.alt, payload.relative_alt, payload.vx, payload.vy, payload.vz, payload.covariance);
+                    mavlink_msg_global_position_int_cov_send(MAVLINK_COMM_0, payload.time_usec, payload.estimator_type, payload.lat, payload.lon, payload.alt, payload.relative_alt, payload.vx, payload.vy, payload.vz, payload.covariance);
+                    break;
+                }
+                case MAVLINK_MSG_ID_LOCAL_POSITION_NED_COV: {
+                    mavlink_local_position_ned_cov_t payload;
+                    mavlink_msg_local_position_ned_cov_decode(&msg, &payload);
+                    mavlink_msg_local_position_ned_cov_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.estimator_type, payload.x, payload.y, payload.z, payload.vx, payload.vy, payload.vz, payload.ax, payload.ay, payload.az, payload.covariance);
+                    mavlink_msg_local_position_ned_cov_send(MAVLINK_COMM_0, payload.time_usec, payload.estimator_type, payload.x, payload.y, payload.z, payload.vx, payload.vy, payload.vz, payload.ax, payload.ay, payload.az, payload.covariance);
+                    break;
+                }
+                case MAVLINK_MSG_ID_RC_CHANNELS: {
+                    mavlink_rc_channels_t payload;
+                    mavlink_msg_rc_channels_decode(&msg, &payload);
+                    mavlink_msg_rc_channels_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.chancount, payload.chan1_raw, payload.chan2_raw, payload.chan3_raw, payload.chan4_raw, payload.chan5_raw, payload.chan6_raw, payload.chan7_raw, payload.chan8_raw, payload.chan9_raw, payload.chan10_raw, payload.chan11_raw, payload.chan12_raw, payload.chan13_raw, payload.chan14_raw, payload.chan15_raw, payload.chan16_raw, payload.chan17_raw, payload.chan18_raw, payload.rssi);
+                    mavlink_msg_rc_channels_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.chancount, payload.chan1_raw, payload.chan2_raw, payload.chan3_raw, payload.chan4_raw, payload.chan5_raw, payload.chan6_raw, payload.chan7_raw, payload.chan8_raw, payload.chan9_raw, payload.chan10_raw, payload.chan11_raw, payload.chan12_raw, payload.chan13_raw, payload.chan14_raw, payload.chan15_raw, payload.chan16_raw, payload.chan17_raw, payload.chan18_raw, payload.rssi);
+                    break;
+                }
+                case MAVLINK_MSG_ID_REQUEST_DATA_STREAM: {
+                    mavlink_request_data_stream_t payload;
+                    mavlink_msg_request_data_stream_decode(&msg, &payload);
+                    mavlink_msg_request_data_stream_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.req_stream_id, payload.req_message_rate, payload.start_stop);
+                    mavlink_msg_request_data_stream_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.req_stream_id, payload.req_message_rate, payload.start_stop);
+                    break;
+                }
+                case MAVLINK_MSG_ID_DATA_STREAM: {
+                    mavlink_data_stream_t payload;
+                    mavlink_msg_data_stream_decode(&msg, &payload);
+                    mavlink_msg_data_stream_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.stream_id, payload.message_rate, payload.on_off);
+                    mavlink_msg_data_stream_send(MAVLINK_COMM_0, payload.stream_id, payload.message_rate, payload.on_off);
+                    break;
+                }
+                case MAVLINK_MSG_ID_MANUAL_CONTROL: {
+                    mavlink_manual_control_t payload;
+                    mavlink_msg_manual_control_decode(&msg, &payload);
+                    mavlink_msg_manual_control_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target, payload.x, payload.y, payload.z, payload.r, payload.buttons, payload.buttons2, payload.enabled_extensions, payload.s, payload.t, payload.aux1, payload.aux2, payload.aux3, payload.aux4, payload.aux5, payload.aux6);
+                    mavlink_msg_manual_control_send(MAVLINK_COMM_0, payload.target, payload.x, payload.y, payload.z, payload.r, payload.buttons, payload.buttons2, payload.enabled_extensions, payload.s, payload.t, payload.aux1, payload.aux2, payload.aux3, payload.aux4, payload.aux5, payload.aux6);
+                    break;
+                }
+                case MAVLINK_MSG_ID_RC_CHANNELS_OVERRIDE: {
+                    mavlink_rc_channels_override_t payload;
+                    mavlink_msg_rc_channels_override_decode(&msg, &payload);
+                    mavlink_msg_rc_channels_override_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.chan1_raw, payload.chan2_raw, payload.chan3_raw, payload.chan4_raw, payload.chan5_raw, payload.chan6_raw, payload.chan7_raw, payload.chan8_raw, payload.chan9_raw, payload.chan10_raw, payload.chan11_raw, payload.chan12_raw, payload.chan13_raw, payload.chan14_raw, payload.chan15_raw, payload.chan16_raw, payload.chan17_raw, payload.chan18_raw);
+                    mavlink_msg_rc_channels_override_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.chan1_raw, payload.chan2_raw, payload.chan3_raw, payload.chan4_raw, payload.chan5_raw, payload.chan6_raw, payload.chan7_raw, payload.chan8_raw, payload.chan9_raw, payload.chan10_raw, payload.chan11_raw, payload.chan12_raw, payload.chan13_raw, payload.chan14_raw, payload.chan15_raw, payload.chan16_raw, payload.chan17_raw, payload.chan18_raw);
+                    break;
+                }
+                case MAVLINK_MSG_ID_MISSION_ITEM_INT: {
+                    mavlink_mission_item_int_t payload;
+                    mavlink_msg_mission_item_int_decode(&msg, &payload);
+                    mavlink_msg_mission_item_int_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.seq, payload.frame, payload.command, payload.current, payload.autocontinue, payload.param1, payload.param2, payload.param3, payload.param4, payload.x, payload.y, payload.z, payload.mission_type);
+                    mavlink_msg_mission_item_int_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.seq, payload.frame, payload.command, payload.current, payload.autocontinue, payload.param1, payload.param2, payload.param3, payload.param4, payload.x, payload.y, payload.z, payload.mission_type);
+                    break;
+                }
+                case MAVLINK_MSG_ID_VFR_HUD: {
+                    mavlink_vfr_hud_t payload;
+                    mavlink_msg_vfr_hud_decode(&msg, &payload);
+                    mavlink_msg_vfr_hud_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.airspeed, payload.groundspeed, payload.heading, payload.throttle, payload.alt, payload.climb);
+                    mavlink_msg_vfr_hud_send(MAVLINK_COMM_0, payload.airspeed, payload.groundspeed, payload.heading, payload.throttle, payload.alt, payload.climb);
+                    break;
+                }
+                case MAVLINK_MSG_ID_COMMAND_INT: {
+                    mavlink_command_int_t payload;
+                    mavlink_msg_command_int_decode(&msg, &payload);
+                    mavlink_msg_command_int_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.frame, payload.command, payload.current, payload.autocontinue, payload.param1, payload.param2, payload.param3, payload.param4, payload.x, payload.y, payload.z);
+                    mavlink_msg_command_int_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.frame, payload.command, payload.current, payload.autocontinue, payload.param1, payload.param2, payload.param3, payload.param4, payload.x, payload.y, payload.z);
+                    break;
+                }
+                case MAVLINK_MSG_ID_COMMAND_LONG: {
+                    mavlink_command_long_t payload;
+                    mavlink_msg_command_long_decode(&msg, &payload);
+                    mavlink_msg_command_long_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.command, payload.confirmation, payload.param1, payload.param2, payload.param3, payload.param4, payload.param5, payload.param6, payload.param7);
+                    mavlink_msg_command_long_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.command, payload.confirmation, payload.param1, payload.param2, payload.param3, payload.param4, payload.param5, payload.param6, payload.param7);
+                    break;
+                }
+                case MAVLINK_MSG_ID_COMMAND_ACK: {
+                    mavlink_command_ack_t payload;
+                    mavlink_msg_command_ack_decode(&msg, &payload);
+                    mavlink_msg_command_ack_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.command, payload.result, payload.progress, payload.result_param2, payload.target_system, payload.target_component);
+                    mavlink_msg_command_ack_send(MAVLINK_COMM_0, payload.command, payload.result, payload.progress, payload.result_param2, payload.target_system, payload.target_component);
+                    break;
+                }
+                case MAVLINK_MSG_ID_COMMAND_CANCEL: {
+                    mavlink_command_cancel_t payload;
+                    mavlink_msg_command_cancel_decode(&msg, &payload);
+                    mavlink_msg_command_cancel_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.command);
+                    mavlink_msg_command_cancel_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.command);
+                    break;
+                }
+                case MAVLINK_MSG_ID_MANUAL_SETPOINT: {
+                    mavlink_manual_setpoint_t payload;
+                    mavlink_msg_manual_setpoint_decode(&msg, &payload);
+                    mavlink_msg_manual_setpoint_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.roll, payload.pitch, payload.yaw, payload.thrust, payload.mode_switch, payload.manual_override_switch);
+                    mavlink_msg_manual_setpoint_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.roll, payload.pitch, payload.yaw, payload.thrust, payload.mode_switch, payload.manual_override_switch);
+                    break;
+                }
+                case MAVLINK_MSG_ID_SET_ATTITUDE_TARGET: {
+                    mavlink_set_attitude_target_t payload;
+                    mavlink_msg_set_attitude_target_decode(&msg, &payload);
+                    mavlink_msg_set_attitude_target_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.target_system, payload.target_component, payload.type_mask, payload.q, payload.body_roll_rate, payload.body_pitch_rate, payload.body_yaw_rate, payload.thrust, payload.thrust_body);
+                    mavlink_msg_set_attitude_target_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.target_system, payload.target_component, payload.type_mask, payload.q, payload.body_roll_rate, payload.body_pitch_rate, payload.body_yaw_rate, payload.thrust, payload.thrust_body);
+                    break;
+                }
+                case MAVLINK_MSG_ID_ATTITUDE_TARGET: {
+                    mavlink_attitude_target_t payload;
+                    mavlink_msg_attitude_target_decode(&msg, &payload);
+                    mavlink_msg_attitude_target_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.type_mask, payload.q, payload.body_roll_rate, payload.body_pitch_rate, payload.body_yaw_rate, payload.thrust);
+                    mavlink_msg_attitude_target_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.type_mask, payload.q, payload.body_roll_rate, payload.body_pitch_rate, payload.body_yaw_rate, payload.thrust);
+                    break;
+                }
+                case MAVLINK_MSG_ID_SET_POSITION_TARGET_LOCAL_NED: {
+                    mavlink_set_position_target_local_ned_t payload;
+                    mavlink_msg_set_position_target_local_ned_decode(&msg, &payload);
+                    mavlink_msg_set_position_target_local_ned_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.target_system, payload.target_component, payload.coordinate_frame, payload.type_mask, payload.x, payload.y, payload.z, payload.vx, payload.vy, payload.vz, payload.afx, payload.afy, payload.afz, payload.yaw, payload.yaw_rate);
+                    mavlink_msg_set_position_target_local_ned_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.target_system, payload.target_component, payload.coordinate_frame, payload.type_mask, payload.x, payload.y, payload.z, payload.vx, payload.vy, payload.vz, payload.afx, payload.afy, payload.afz, payload.yaw, payload.yaw_rate);
+                    break;
+                }
+                case MAVLINK_MSG_ID_POSITION_TARGET_LOCAL_NED: {
+                    mavlink_position_target_local_ned_t payload;
+                    mavlink_msg_position_target_local_ned_decode(&msg, &payload);
+                    mavlink_msg_position_target_local_ned_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.coordinate_frame, payload.type_mask, payload.x, payload.y, payload.z, payload.vx, payload.vy, payload.vz, payload.afx, payload.afy, payload.afz, payload.yaw, payload.yaw_rate);
+                    mavlink_msg_position_target_local_ned_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.coordinate_frame, payload.type_mask, payload.x, payload.y, payload.z, payload.vx, payload.vy, payload.vz, payload.afx, payload.afy, payload.afz, payload.yaw, payload.yaw_rate);
+                    break;
+                }
+                case MAVLINK_MSG_ID_SET_POSITION_TARGET_GLOBAL_INT: {
+                    mavlink_set_position_target_global_int_t payload;
+                    mavlink_msg_set_position_target_global_int_decode(&msg, &payload);
+                    mavlink_msg_set_position_target_global_int_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.target_system, payload.target_component, payload.coordinate_frame, payload.type_mask, payload.lat_int, payload.lon_int, payload.alt, payload.vx, payload.vy, payload.vz, payload.afx, payload.afy, payload.afz, payload.yaw, payload.yaw_rate);
+                    mavlink_msg_set_position_target_global_int_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.target_system, payload.target_component, payload.coordinate_frame, payload.type_mask, payload.lat_int, payload.lon_int, payload.alt, payload.vx, payload.vy, payload.vz, payload.afx, payload.afy, payload.afz, payload.yaw, payload.yaw_rate);
+                    break;
+                }
+                case MAVLINK_MSG_ID_POSITION_TARGET_GLOBAL_INT: {
+                    mavlink_position_target_global_int_t payload;
+                    mavlink_msg_position_target_global_int_decode(&msg, &payload);
+                    mavlink_msg_position_target_global_int_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.coordinate_frame, payload.type_mask, payload.lat_int, payload.lon_int, payload.alt, payload.vx, payload.vy, payload.vz, payload.afx, payload.afy, payload.afz, payload.yaw, payload.yaw_rate);
+                    mavlink_msg_position_target_global_int_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.coordinate_frame, payload.type_mask, payload.lat_int, payload.lon_int, payload.alt, payload.vx, payload.vy, payload.vz, payload.afx, payload.afy, payload.afz, payload.yaw, payload.yaw_rate);
+                    break;
+                }
+                case MAVLINK_MSG_ID_LOCAL_POSITION_NED_SYSTEM_GLOBAL_OFFSET: {
+                    mavlink_local_position_ned_system_global_offset_t payload;
+                    mavlink_msg_local_position_ned_system_global_offset_decode(&msg, &payload);
+                    mavlink_msg_local_position_ned_system_global_offset_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.x, payload.y, payload.z, payload.roll, payload.pitch, payload.yaw);
+                    mavlink_msg_local_position_ned_system_global_offset_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.x, payload.y, payload.z, payload.roll, payload.pitch, payload.yaw);
+                    break;
+                }
+                case MAVLINK_MSG_ID_HIL_STATE: {
+                    mavlink_hil_state_t payload;
+                    mavlink_msg_hil_state_decode(&msg, &payload);
+                    mavlink_msg_hil_state_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.roll, payload.pitch, payload.yaw, payload.rollspeed, payload.pitchspeed, payload.yawspeed, payload.lat, payload.lon, payload.alt, payload.vx, payload.vy, payload.vz, payload.xacc, payload.yacc, payload.zacc);
+                    mavlink_msg_hil_state_send(MAVLINK_COMM_0, payload.time_usec, payload.roll, payload.pitch, payload.yaw, payload.rollspeed, payload.pitchspeed, payload.yawspeed, payload.lat, payload.lon, payload.alt, payload.vx, payload.vy, payload.vz, payload.xacc, payload.yacc, payload.zacc);
+                    break;
+                }
+                case MAVLINK_MSG_ID_HIL_CONTROLS: {
+                    mavlink_hil_controls_t payload;
+                    mavlink_msg_hil_controls_decode(&msg, &payload);
+                    mavlink_msg_hil_controls_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.roll_ailerons, payload.pitch_elevator, payload.yaw_rudder, payload.throttle, payload.aux1, payload.aux2, payload.aux3, payload.aux4, payload.mode, payload.nav_mode);
+                    mavlink_msg_hil_controls_send(MAVLINK_COMM_0, payload.time_usec, payload.roll_ailerons, payload.pitch_elevator, payload.yaw_rudder, payload.throttle, payload.aux1, payload.aux2, payload.aux3, payload.aux4, payload.mode, payload.nav_mode);
+                    break;
+                }
+                case MAVLINK_MSG_ID_HIL_RC_INPUTS_RAW: {
+                    mavlink_hil_rc_inputs_raw_t payload;
+                    mavlink_msg_hil_rc_inputs_raw_decode(&msg, &payload);
+                    mavlink_msg_hil_rc_inputs_raw_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.chan1_raw, payload.chan2_raw, payload.chan3_raw, payload.chan4_raw, payload.chan5_raw, payload.chan6_raw, payload.chan7_raw, payload.chan8_raw, payload.chan9_raw, payload.chan10_raw, payload.chan11_raw, payload.chan12_raw, payload.rssi);
+                    mavlink_msg_hil_rc_inputs_raw_send(MAVLINK_COMM_0, payload.time_usec, payload.chan1_raw, payload.chan2_raw, payload.chan3_raw, payload.chan4_raw, payload.chan5_raw, payload.chan6_raw, payload.chan7_raw, payload.chan8_raw, payload.chan9_raw, payload.chan10_raw, payload.chan11_raw, payload.chan12_raw, payload.rssi);
+                    break;
+                }
+                case MAVLINK_MSG_ID_HIL_ACTUATOR_CONTROLS: {
+                    mavlink_hil_actuator_controls_t payload;
+                    mavlink_msg_hil_actuator_controls_decode(&msg, &payload);
+                    mavlink_msg_hil_actuator_controls_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.controls, payload.mode, payload.flags);
+                    mavlink_msg_hil_actuator_controls_send(MAVLINK_COMM_0, payload.time_usec, payload.controls, payload.mode, payload.flags);
+                    break;
+                }
+                case MAVLINK_MSG_ID_OPTICAL_FLOW: {
+                    mavlink_optical_flow_t payload;
+                    mavlink_msg_optical_flow_decode(&msg, &payload);
+                    mavlink_msg_optical_flow_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.sensor_id, payload.flow_x, payload.flow_y, payload.flow_comp_m_x, payload.flow_comp_m_y, payload.quality, payload.ground_distance, payload.flow_rate_x, payload.flow_rate_y);
+                    mavlink_msg_optical_flow_send(MAVLINK_COMM_0, payload.time_usec, payload.sensor_id, payload.flow_x, payload.flow_y, payload.flow_comp_m_x, payload.flow_comp_m_y, payload.quality, payload.ground_distance, payload.flow_rate_x, payload.flow_rate_y);
+                    break;
+                }
+                case MAVLINK_MSG_ID_GLOBAL_VISION_POSITION_ESTIMATE: {
+                    mavlink_global_vision_position_estimate_t payload;
+                    mavlink_msg_global_vision_position_estimate_decode(&msg, &payload);
+                    mavlink_msg_global_vision_position_estimate_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.usec, payload.x, payload.y, payload.z, payload.roll, payload.pitch, payload.yaw, payload.covariance, payload.reset_counter);
+                    mavlink_msg_global_vision_position_estimate_send(MAVLINK_COMM_0, payload.usec, payload.x, payload.y, payload.z, payload.roll, payload.pitch, payload.yaw, payload.covariance, payload.reset_counter);
+                    break;
+                }
+                case MAVLINK_MSG_ID_VISION_POSITION_ESTIMATE: {
+                    mavlink_vision_position_estimate_t payload;
+                    mavlink_msg_vision_position_estimate_decode(&msg, &payload);
+                    mavlink_msg_vision_position_estimate_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.usec, payload.x, payload.y, payload.z, payload.roll, payload.pitch, payload.yaw, payload.covariance, payload.reset_counter);
+                    mavlink_msg_vision_position_estimate_send(MAVLINK_COMM_0, payload.usec, payload.x, payload.y, payload.z, payload.roll, payload.pitch, payload.yaw, payload.covariance, payload.reset_counter);
+                    break;
+                }
+                case MAVLINK_MSG_ID_VISION_SPEED_ESTIMATE: {
+                    mavlink_vision_speed_estimate_t payload;
+                    mavlink_msg_vision_speed_estimate_decode(&msg, &payload);
+                    mavlink_msg_vision_speed_estimate_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.usec, payload.x, payload.y, payload.z, payload.covariance, payload.reset_counter);
+                    mavlink_msg_vision_speed_estimate_send(MAVLINK_COMM_0, payload.usec, payload.x, payload.y, payload.z, payload.covariance, payload.reset_counter);
+                    break;
+                }
+                case MAVLINK_MSG_ID_VICON_POSITION_ESTIMATE: {
+                    mavlink_vicon_position_estimate_t payload;
+                    mavlink_msg_vicon_position_estimate_decode(&msg, &payload);
+                    mavlink_msg_vicon_position_estimate_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.usec, payload.x, payload.y, payload.z, payload.roll, payload.pitch, payload.yaw, payload.covariance);
+                    mavlink_msg_vicon_position_estimate_send(MAVLINK_COMM_0, payload.usec, payload.x, payload.y, payload.z, payload.roll, payload.pitch, payload.yaw, payload.covariance);
+                    break;
+                }
+                case MAVLINK_MSG_ID_HIGHRES_IMU: {
+                    mavlink_highres_imu_t payload;
+                    mavlink_msg_highres_imu_decode(&msg, &payload);
+                    mavlink_msg_highres_imu_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.xacc, payload.yacc, payload.zacc, payload.xgyro, payload.ygyro, payload.zgyro, payload.xmag, payload.ymag, payload.zmag, payload.abs_pressure, payload.diff_pressure, payload.pressure_alt, payload.temperature, payload.fields_updated, payload.id);
+                    mavlink_msg_highres_imu_send(MAVLINK_COMM_0, payload.time_usec, payload.xacc, payload.yacc, payload.zacc, payload.xgyro, payload.ygyro, payload.zgyro, payload.xmag, payload.ymag, payload.zmag, payload.abs_pressure, payload.diff_pressure, payload.pressure_alt, payload.temperature, payload.fields_updated, payload.id);
+                    break;
+                }
+                case MAVLINK_MSG_ID_OPTICAL_FLOW_RAD: {
+                    mavlink_optical_flow_rad_t payload;
+                    mavlink_msg_optical_flow_rad_decode(&msg, &payload);
+                    mavlink_msg_optical_flow_rad_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.sensor_id, payload.integration_time_us, payload.integrated_x, payload.integrated_y, payload.integrated_xgyro, payload.integrated_ygyro, payload.integrated_zgyro, payload.temperature, payload.quality, payload.time_delta_distance_us, payload.distance);
+                    mavlink_msg_optical_flow_rad_send(MAVLINK_COMM_0, payload.time_usec, payload.sensor_id, payload.integration_time_us, payload.integrated_x, payload.integrated_y, payload.integrated_xgyro, payload.integrated_ygyro, payload.integrated_zgyro, payload.temperature, payload.quality, payload.time_delta_distance_us, payload.distance);
+                    break;
+                }
+                case MAVLINK_MSG_ID_HIL_SENSOR: {
+                    mavlink_hil_sensor_t payload;
+                    mavlink_msg_hil_sensor_decode(&msg, &payload);
+                    mavlink_msg_hil_sensor_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.xacc, payload.yacc, payload.zacc, payload.xgyro, payload.ygyro, payload.zgyro, payload.xmag, payload.ymag, payload.zmag, payload.abs_pressure, payload.diff_pressure, payload.pressure_alt, payload.temperature, payload.fields_updated, payload.id);
+                    mavlink_msg_hil_sensor_send(MAVLINK_COMM_0, payload.time_usec, payload.xacc, payload.yacc, payload.zacc, payload.xgyro, payload.ygyro, payload.zgyro, payload.xmag, payload.ymag, payload.zmag, payload.abs_pressure, payload.diff_pressure, payload.pressure_alt, payload.temperature, payload.fields_updated, payload.id);
+                    break;
+                }
+                case MAVLINK_MSG_ID_SIM_STATE: {
+                    mavlink_sim_state_t payload;
+                    mavlink_msg_sim_state_decode(&msg, &payload);
+                    mavlink_msg_sim_state_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.q1, payload.q2, payload.q3, payload.q4, payload.roll, payload.pitch, payload.yaw, payload.xacc, payload.yacc, payload.zacc, payload.xgyro, payload.ygyro, payload.zgyro, payload.lat, payload.lon, payload.alt, payload.std_dev_horz, payload.std_dev_vert, payload.vn, payload.ve, payload.vd, payload.lat_int, payload.lon_int);
+                    mavlink_msg_sim_state_send(MAVLINK_COMM_0, payload.q1, payload.q2, payload.q3, payload.q4, payload.roll, payload.pitch, payload.yaw, payload.xacc, payload.yacc, payload.zacc, payload.xgyro, payload.ygyro, payload.zgyro, payload.lat, payload.lon, payload.alt, payload.std_dev_horz, payload.std_dev_vert, payload.vn, payload.ve, payload.vd, payload.lat_int, payload.lon_int);
+                    break;
+                }
+                case MAVLINK_MSG_ID_RADIO_STATUS: {
+                    mavlink_radio_status_t payload;
+                    mavlink_msg_radio_status_decode(&msg, &payload);
+                    mavlink_msg_radio_status_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.rssi, payload.remrssi, payload.txbuf, payload.noise, payload.remnoise, payload.rxerrors, payload.fixed);
+                    mavlink_msg_radio_status_send(MAVLINK_COMM_0, payload.rssi, payload.remrssi, payload.txbuf, payload.noise, payload.remnoise, payload.rxerrors, payload.fixed);
+                    break;
+                }
+                case MAVLINK_MSG_ID_FILE_TRANSFER_PROTOCOL: {
+                    mavlink_file_transfer_protocol_t payload;
+                    mavlink_msg_file_transfer_protocol_decode(&msg, &payload);
+                    mavlink_msg_file_transfer_protocol_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_network, payload.target_system, payload.target_component, payload.payload);
+                    mavlink_msg_file_transfer_protocol_send(MAVLINK_COMM_0, payload.target_network, payload.target_system, payload.target_component, payload.payload);
+                    break;
+                }
+                case MAVLINK_MSG_ID_TIMESYNC: {
+                    mavlink_timesync_t payload;
+                    mavlink_msg_timesync_decode(&msg, &payload);
+                    mavlink_msg_timesync_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.tc1, payload.ts1, payload.target_system, payload.target_component);
+                    mavlink_msg_timesync_send(MAVLINK_COMM_0, payload.tc1, payload.ts1, payload.target_system, payload.target_component);
+                    break;
+                }
+                case MAVLINK_MSG_ID_CAMERA_TRIGGER: {
+                    mavlink_camera_trigger_t payload;
+                    mavlink_msg_camera_trigger_decode(&msg, &payload);
+                    mavlink_msg_camera_trigger_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.seq);
+                    mavlink_msg_camera_trigger_send(MAVLINK_COMM_0, payload.time_usec, payload.seq);
+                    break;
+                }
+                case MAVLINK_MSG_ID_HIL_GPS: {
+                    mavlink_hil_gps_t payload;
+                    mavlink_msg_hil_gps_decode(&msg, &payload);
+                    mavlink_msg_hil_gps_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.fix_type, payload.lat, payload.lon, payload.alt, payload.eph, payload.epv, payload.vel, payload.vn, payload.ve, payload.vd, payload.cog, payload.satellites_visible, payload.id, payload.yaw);
+                    mavlink_msg_hil_gps_send(MAVLINK_COMM_0, payload.time_usec, payload.fix_type, payload.lat, payload.lon, payload.alt, payload.eph, payload.epv, payload.vel, payload.vn, payload.ve, payload.vd, payload.cog, payload.satellites_visible, payload.id, payload.yaw);
+                    break;
+                }
+                case MAVLINK_MSG_ID_HIL_OPTICAL_FLOW: {
+                    mavlink_hil_optical_flow_t payload;
+                    mavlink_msg_hil_optical_flow_decode(&msg, &payload);
+                    mavlink_msg_hil_optical_flow_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.sensor_id, payload.integration_time_us, payload.integrated_x, payload.integrated_y, payload.integrated_xgyro, payload.integrated_ygyro, payload.integrated_zgyro, payload.temperature, payload.quality, payload.time_delta_distance_us, payload.distance);
+                    mavlink_msg_hil_optical_flow_send(MAVLINK_COMM_0, payload.time_usec, payload.sensor_id, payload.integration_time_us, payload.integrated_x, payload.integrated_y, payload.integrated_xgyro, payload.integrated_ygyro, payload.integrated_zgyro, payload.temperature, payload.quality, payload.time_delta_distance_us, payload.distance);
+                    break;
+                }
+                case MAVLINK_MSG_ID_HIL_STATE_QUATERNION: {
+                    mavlink_hil_state_quaternion_t payload;
+                    mavlink_msg_hil_state_quaternion_decode(&msg, &payload);
+                    mavlink_msg_hil_state_quaternion_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.attitude_quaternion, payload.rollspeed, payload.pitchspeed, payload.yawspeed, payload.lat, payload.lon, payload.alt, payload.vx, payload.vy, payload.vz, payload.ind_airspeed, payload.true_airspeed, payload.xacc, payload.yacc, payload.zacc);
+                    mavlink_msg_hil_state_quaternion_send(MAVLINK_COMM_0, payload.time_usec, payload.attitude_quaternion, payload.rollspeed, payload.pitchspeed, payload.yawspeed, payload.lat, payload.lon, payload.alt, payload.vx, payload.vy, payload.vz, payload.ind_airspeed, payload.true_airspeed, payload.xacc, payload.yacc, payload.zacc);
+                    break;
+                }
+                case MAVLINK_MSG_ID_SCALED_IMU2: {
+                    mavlink_scaled_imu2_t payload;
+                    mavlink_msg_scaled_imu2_decode(&msg, &payload);
+                    mavlink_msg_scaled_imu2_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.xacc, payload.yacc, payload.zacc, payload.xgyro, payload.ygyro, payload.zgyro, payload.xmag, payload.ymag, payload.zmag, payload.temperature);
+                    mavlink_msg_scaled_imu2_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.xacc, payload.yacc, payload.zacc, payload.xgyro, payload.ygyro, payload.zgyro, payload.xmag, payload.ymag, payload.zmag, payload.temperature);
+                    break;
+                }
+                case MAVLINK_MSG_ID_LOG_REQUEST_LIST: {
+                    mavlink_log_request_list_t payload;
+                    mavlink_msg_log_request_list_decode(&msg, &payload);
+                    mavlink_msg_log_request_list_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.start, payload.end);
+                    mavlink_msg_log_request_list_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.start, payload.end);
+                    break;
+                }
+                case MAVLINK_MSG_ID_LOG_ENTRY: {
+                    mavlink_log_entry_t payload;
+                    mavlink_msg_log_entry_decode(&msg, &payload);
+                    mavlink_msg_log_entry_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.id, payload.num_logs, payload.last_log_num, payload.time_utc, payload.size);
+                    mavlink_msg_log_entry_send(MAVLINK_COMM_0, payload.id, payload.num_logs, payload.last_log_num, payload.time_utc, payload.size);
+                    break;
+                }
+                case MAVLINK_MSG_ID_LOG_REQUEST_DATA: {
+                    mavlink_log_request_data_t payload;
+                    mavlink_msg_log_request_data_decode(&msg, &payload);
+                    mavlink_msg_log_request_data_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.id, payload.ofs, payload.count);
+                    mavlink_msg_log_request_data_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.id, payload.ofs, payload.count);
+                    break;
+                }
+                case MAVLINK_MSG_ID_LOG_DATA: {
+                    mavlink_log_data_t payload;
+                    mavlink_msg_log_data_decode(&msg, &payload);
+                    mavlink_msg_log_data_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.id, payload.ofs, payload.count, payload.data);
+                    mavlink_msg_log_data_send(MAVLINK_COMM_0, payload.id, payload.ofs, payload.count, payload.data);
+                    break;
+                }
+                case MAVLINK_MSG_ID_LOG_ERASE: {
+                    mavlink_log_erase_t payload;
+                    mavlink_msg_log_erase_decode(&msg, &payload);
+                    mavlink_msg_log_erase_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component);
+                    mavlink_msg_log_erase_send(MAVLINK_COMM_0, payload.target_system, payload.target_component);
+                    break;
+                }
+                case MAVLINK_MSG_ID_LOG_REQUEST_END: {
+                    mavlink_log_request_end_t payload;
+                    mavlink_msg_log_request_end_decode(&msg, &payload);
+                    mavlink_msg_log_request_end_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component);
+                    mavlink_msg_log_request_end_send(MAVLINK_COMM_0, payload.target_system, payload.target_component);
+                    break;
+                }
+                case MAVLINK_MSG_ID_GPS_INJECT_DATA: {
+                    mavlink_gps_inject_data_t payload;
+                    mavlink_msg_gps_inject_data_decode(&msg, &payload);
+                    mavlink_msg_gps_inject_data_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.len, payload.data);
+                    mavlink_msg_gps_inject_data_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.len, payload.data);
+                    break;
+                }
+                case MAVLINK_MSG_ID_GPS2_RAW: {
+                    mavlink_gps2_raw_t payload;
+                    mavlink_msg_gps2_raw_decode(&msg, &payload);
+                    mavlink_msg_gps2_raw_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.fix_type, payload.lat, payload.lon, payload.alt, payload.eph, payload.epv, payload.vel, payload.cog, payload.satellites_visible, payload.dgps_numch, payload.dgps_age, payload.yaw, payload.alt_ellipsoid, payload.h_acc, payload.v_acc, payload.vel_acc, payload.hdg_acc);
+                    mavlink_msg_gps2_raw_send(MAVLINK_COMM_0, payload.time_usec, payload.fix_type, payload.lat, payload.lon, payload.alt, payload.eph, payload.epv, payload.vel, payload.cog, payload.satellites_visible, payload.dgps_numch, payload.dgps_age, payload.yaw, payload.alt_ellipsoid, payload.h_acc, payload.v_acc, payload.vel_acc, payload.hdg_acc);
+                    break;
+                }
+                case MAVLINK_MSG_ID_POWER_STATUS: {
+                    mavlink_power_status_t payload;
+                    mavlink_msg_power_status_decode(&msg, &payload);
+                    mavlink_msg_power_status_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.Vcc, payload.Vservo, payload.flags);
+                    mavlink_msg_power_status_send(MAVLINK_COMM_0, payload.Vcc, payload.Vservo, payload.flags);
+                    break;
+                }
+                case MAVLINK_MSG_ID_SERIAL_CONTROL: {
+                    mavlink_serial_control_t payload;
+                    mavlink_msg_serial_control_decode(&msg, &payload);
+                    mavlink_msg_serial_control_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.device, payload.flags, payload.timeout, payload.baudrate, payload.count, payload.data, payload.target_system, payload.target_component);
+                    mavlink_msg_serial_control_send(MAVLINK_COMM_0, payload.device, payload.flags, payload.timeout, payload.baudrate, payload.count, payload.data, payload.target_system, payload.target_component);
+                    break;
+                }
+                case MAVLINK_MSG_ID_GPS_RTK: {
+                    mavlink_gps_rtk_t payload;
+                    mavlink_msg_gps_rtk_decode(&msg, &payload);
+                    mavlink_msg_gps_rtk_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_last_baseline_ms, payload.rtk_receiver_id, payload.wn, payload.tow, payload.rtk_health, payload.rtk_rate, payload.nsats, payload.baseline_coords_type, payload.baseline_a_mm, payload.baseline_b_mm, payload.baseline_c_mm, payload.accuracy, payload.iar_num_hypotheses);
+                    mavlink_msg_gps_rtk_send(MAVLINK_COMM_0, payload.time_last_baseline_ms, payload.rtk_receiver_id, payload.wn, payload.tow, payload.rtk_health, payload.rtk_rate, payload.nsats, payload.baseline_coords_type, payload.baseline_a_mm, payload.baseline_b_mm, payload.baseline_c_mm, payload.accuracy, payload.iar_num_hypotheses);
+                    break;
+                }
+                case MAVLINK_MSG_ID_GPS2_RTK: {
+                    mavlink_gps2_rtk_t payload;
+                    mavlink_msg_gps2_rtk_decode(&msg, &payload);
+                    mavlink_msg_gps2_rtk_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_last_baseline_ms, payload.rtk_receiver_id, payload.wn, payload.tow, payload.rtk_health, payload.rtk_rate, payload.nsats, payload.baseline_coords_type, payload.baseline_a_mm, payload.baseline_b_mm, payload.baseline_c_mm, payload.accuracy, payload.iar_num_hypotheses);
+                    mavlink_msg_gps2_rtk_send(MAVLINK_COMM_0, payload.time_last_baseline_ms, payload.rtk_receiver_id, payload.wn, payload.tow, payload.rtk_health, payload.rtk_rate, payload.nsats, payload.baseline_coords_type, payload.baseline_a_mm, payload.baseline_b_mm, payload.baseline_c_mm, payload.accuracy, payload.iar_num_hypotheses);
+                    break;
+                }
+                case MAVLINK_MSG_ID_SCALED_IMU3: {
+                    mavlink_scaled_imu3_t payload;
+                    mavlink_msg_scaled_imu3_decode(&msg, &payload);
+                    mavlink_msg_scaled_imu3_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.xacc, payload.yacc, payload.zacc, payload.xgyro, payload.ygyro, payload.zgyro, payload.xmag, payload.ymag, payload.zmag, payload.temperature);
+                    mavlink_msg_scaled_imu3_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.xacc, payload.yacc, payload.zacc, payload.xgyro, payload.ygyro, payload.zgyro, payload.xmag, payload.ymag, payload.zmag, payload.temperature);
+                    break;
+                }
+                case MAVLINK_MSG_ID_DATA_TRANSMISSION_HANDSHAKE: {
+                    mavlink_data_transmission_handshake_t payload;
+                    mavlink_msg_data_transmission_handshake_decode(&msg, &payload);
+                    mavlink_msg_data_transmission_handshake_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.type, payload.size, payload.width, payload.height, payload.packets, payload.payload, payload.jpg_quality);
+                    mavlink_msg_data_transmission_handshake_send(MAVLINK_COMM_0, payload.type, payload.size, payload.width, payload.height, payload.packets, payload.payload, payload.jpg_quality);
+                    break;
+                }
+                case MAVLINK_MSG_ID_ENCAPSULATED_DATA: {
+                    mavlink_encapsulated_data_t payload;
+                    mavlink_msg_encapsulated_data_decode(&msg, &payload);
+                    mavlink_msg_encapsulated_data_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.seqnr, payload.data);
+                    mavlink_msg_encapsulated_data_send(MAVLINK_COMM_0, payload.seqnr, payload.data);
+                    break;
+                }
+                case MAVLINK_MSG_ID_DISTANCE_SENSOR: {
+                    mavlink_distance_sensor_t payload;
+                    mavlink_msg_distance_sensor_decode(&msg, &payload);
+                    mavlink_msg_distance_sensor_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.min_distance, payload.max_distance, payload.current_distance, payload.type, payload.id, payload.orientation, payload.covariance, payload.horizontal_fov, payload.vertical_fov, payload.quaternion, payload.signal_quality);
+                    mavlink_msg_distance_sensor_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.min_distance, payload.max_distance, payload.current_distance, payload.type, payload.id, payload.orientation, payload.covariance, payload.horizontal_fov, payload.vertical_fov, payload.quaternion, payload.signal_quality);
+                    break;
+                }
+                case MAVLINK_MSG_ID_TERRAIN_REQUEST: {
+                    mavlink_terrain_request_t payload;
+                    mavlink_msg_terrain_request_decode(&msg, &payload);
+                    mavlink_msg_terrain_request_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.lat, payload.lon, payload.grid_spacing, payload.mask);
+                    mavlink_msg_terrain_request_send(MAVLINK_COMM_0, payload.lat, payload.lon, payload.grid_spacing, payload.mask);
+                    break;
+                }
+                case MAVLINK_MSG_ID_TERRAIN_DATA: {
+                    mavlink_terrain_data_t payload;
+                    mavlink_msg_terrain_data_decode(&msg, &payload);
+                    mavlink_msg_terrain_data_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.lat, payload.lon, payload.grid_spacing, payload.gridbit, payload.data);
+                    mavlink_msg_terrain_data_send(MAVLINK_COMM_0, payload.lat, payload.lon, payload.grid_spacing, payload.gridbit, payload.data);
+                    break;
+                }
+                case MAVLINK_MSG_ID_TERRAIN_CHECK: {
+                    mavlink_terrain_check_t payload;
+                    mavlink_msg_terrain_check_decode(&msg, &payload);
+                    mavlink_msg_terrain_check_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.lat, payload.lon);
+                    mavlink_msg_terrain_check_send(MAVLINK_COMM_0, payload.lat, payload.lon);
+                    break;
+                }
+                case MAVLINK_MSG_ID_TERRAIN_REPORT: {
+                    mavlink_terrain_report_t payload;
+                    mavlink_msg_terrain_report_decode(&msg, &payload);
+                    mavlink_msg_terrain_report_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.lat, payload.lon, payload.spacing, payload.terrain_height, payload.current_height, payload.pending, payload.loaded);
+                    mavlink_msg_terrain_report_send(MAVLINK_COMM_0, payload.lat, payload.lon, payload.spacing, payload.terrain_height, payload.current_height, payload.pending, payload.loaded);
+                    break;
+                }
+                case MAVLINK_MSG_ID_SCALED_PRESSURE2: {
+                    mavlink_scaled_pressure2_t payload;
+                    mavlink_msg_scaled_pressure2_decode(&msg, &payload);
+                    mavlink_msg_scaled_pressure2_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.press_abs, payload.press_diff, payload.temperature, payload.temperature_press_diff);
+                    mavlink_msg_scaled_pressure2_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.press_abs, payload.press_diff, payload.temperature, payload.temperature_press_diff);
+                    break;
+                }
+                case MAVLINK_MSG_ID_ATT_POS_MOCAP: {
+                    mavlink_att_pos_mocap_t payload;
+                    mavlink_msg_att_pos_mocap_decode(&msg, &payload);
+                    mavlink_msg_att_pos_mocap_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.q, payload.x, payload.y, payload.z, payload.covariance);
+                    mavlink_msg_att_pos_mocap_send(MAVLINK_COMM_0, payload.time_usec, payload.q, payload.x, payload.y, payload.z, payload.covariance);
+                    break;
+                }
+                case MAVLINK_MSG_ID_SET_ACTUATOR_CONTROL_TARGET: {
+                    mavlink_set_actuator_control_target_t payload;
+                    mavlink_msg_set_actuator_control_target_decode(&msg, &payload);
+                    mavlink_msg_set_actuator_control_target_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.group_mlx, payload.target_system, payload.target_component, payload.controls);
+                    mavlink_msg_set_actuator_control_target_send(MAVLINK_COMM_0, payload.time_usec, payload.group_mlx, payload.target_system, payload.target_component, payload.controls);
+                    break;
+                }
+                case MAVLINK_MSG_ID_ACTUATOR_CONTROL_TARGET: {
+                    mavlink_actuator_control_target_t payload;
+                    mavlink_msg_actuator_control_target_decode(&msg, &payload);
+                    mavlink_msg_actuator_control_target_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.group_mlx, payload.controls);
+                    mavlink_msg_actuator_control_target_send(MAVLINK_COMM_0, payload.time_usec, payload.group_mlx, payload.controls);
+                    break;
+                }
+                case MAVLINK_MSG_ID_ALTITUDE: {
+                    mavlink_altitude_t payload;
+                    mavlink_msg_altitude_decode(&msg, &payload);
+                    mavlink_msg_altitude_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.altitude_monotonic, payload.altitude_amsl, payload.altitude_local, payload.altitude_relative, payload.altitude_terrain, payload.bottom_clearance);
+                    mavlink_msg_altitude_send(MAVLINK_COMM_0, payload.time_usec, payload.altitude_monotonic, payload.altitude_amsl, payload.altitude_local, payload.altitude_relative, payload.altitude_terrain, payload.bottom_clearance);
+                    break;
+                }
+                case MAVLINK_MSG_ID_RESOURCE_REQUEST: {
+                    mavlink_resource_request_t payload;
+                    mavlink_msg_resource_request_decode(&msg, &payload);
+                    mavlink_msg_resource_request_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.request_id, payload.uri_type, payload.uri, payload.transfer_type, payload.storage);
+                    mavlink_msg_resource_request_send(MAVLINK_COMM_0, payload.request_id, payload.uri_type, payload.uri, payload.transfer_type, payload.storage);
+                    break;
+                }
+                case MAVLINK_MSG_ID_SCALED_PRESSURE3: {
+                    mavlink_scaled_pressure3_t payload;
+                    mavlink_msg_scaled_pressure3_decode(&msg, &payload);
+                    mavlink_msg_scaled_pressure3_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.press_abs, payload.press_diff, payload.temperature, payload.temperature_press_diff);
+                    mavlink_msg_scaled_pressure3_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.press_abs, payload.press_diff, payload.temperature, payload.temperature_press_diff);
+                    break;
+                }
+                case MAVLINK_MSG_ID_FOLLOW_TARGET: {
+                    mavlink_follow_target_t payload;
+                    mavlink_msg_follow_target_decode(&msg, &payload);
+                    mavlink_msg_follow_target_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.timestamp, payload.est_capabilities, payload.lat, payload.lon, payload.alt, payload.vel, payload.acc, payload.attitude_q, payload.rates, payload.position_cov, payload.custom_state);
+                    mavlink_msg_follow_target_send(MAVLINK_COMM_0, payload.timestamp, payload.est_capabilities, payload.lat, payload.lon, payload.alt, payload.vel, payload.acc, payload.attitude_q, payload.rates, payload.position_cov, payload.custom_state);
+                    break;
+                }
+                case MAVLINK_MSG_ID_CONTROL_SYSTEM_STATE: {
+                    mavlink_control_system_state_t payload;
+                    mavlink_msg_control_system_state_decode(&msg, &payload);
+                    mavlink_msg_control_system_state_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.x_acc, payload.y_acc, payload.z_acc, payload.x_vel, payload.y_vel, payload.z_vel, payload.x_pos, payload.y_pos, payload.z_pos, payload.airspeed, payload.vel_variance, payload.pos_variance, payload.q, payload.roll_rate, payload.pitch_rate, payload.yaw_rate);
+                    mavlink_msg_control_system_state_send(MAVLINK_COMM_0, payload.time_usec, payload.x_acc, payload.y_acc, payload.z_acc, payload.x_vel, payload.y_vel, payload.z_vel, payload.x_pos, payload.y_pos, payload.z_pos, payload.airspeed, payload.vel_variance, payload.pos_variance, payload.q, payload.roll_rate, payload.pitch_rate, payload.yaw_rate);
+                    break;
+                }
+                case MAVLINK_MSG_ID_BATTERY_STATUS: {
+                    mavlink_battery_status_t payload;
+                    mavlink_msg_battery_status_decode(&msg, &payload);
+                    mavlink_msg_battery_status_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.id, payload.battery_function, payload.type, payload.temperature, payload.voltages, payload.current_battery, payload.current_consumed, payload.energy_consumed, payload.battery_remaining, payload.time_remaining, payload.charge_state, payload.voltages_ext, payload.mode, payload.fault_bitmask);
+                    mavlink_msg_battery_status_send(MAVLINK_COMM_0, payload.id, payload.battery_function, payload.type, payload.temperature, payload.voltages, payload.current_battery, payload.current_consumed, payload.energy_consumed, payload.battery_remaining, payload.time_remaining, payload.charge_state, payload.voltages_ext, payload.mode, payload.fault_bitmask);
+                    break;
+                }
+                case MAVLINK_MSG_ID_AUTOPILOT_VERSION: {
+                    mavlink_autopilot_version_t payload;
+                    mavlink_msg_autopilot_version_decode(&msg, &payload);
+                    mavlink_msg_autopilot_version_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.capabilities, payload.flight_sw_version, payload.middleware_sw_version, payload.os_sw_version, payload.board_version, payload.flight_custom_version, payload.middleware_custom_version, payload.os_custom_version, payload.vendor_id, payload.product_id, payload.uid, payload.uid2);
+                    mavlink_msg_autopilot_version_send(MAVLINK_COMM_0, payload.capabilities, payload.flight_sw_version, payload.middleware_sw_version, payload.os_sw_version, payload.board_version, payload.flight_custom_version, payload.middleware_custom_version, payload.os_custom_version, payload.vendor_id, payload.product_id, payload.uid, payload.uid2);
+                    break;
+                }
+                case MAVLINK_MSG_ID_LANDING_TARGET: {
+                    mavlink_landing_target_t payload;
+                    mavlink_msg_landing_target_decode(&msg, &payload);
+                    mavlink_msg_landing_target_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.target_num, payload.frame, payload.angle_x, payload.angle_y, payload.distance, payload.size_x, payload.size_y, payload.x, payload.y, payload.z, payload.q, payload.type, payload.position_valid);
+                    mavlink_msg_landing_target_send(MAVLINK_COMM_0, payload.time_usec, payload.target_num, payload.frame, payload.angle_x, payload.angle_y, payload.distance, payload.size_x, payload.size_y, payload.x, payload.y, payload.z, payload.q, payload.type, payload.position_valid);
+                    break;
+                }
+                case MAVLINK_MSG_ID_FENCE_STATUS: {
+                    mavlink_fence_status_t payload;
+                    mavlink_msg_fence_status_decode(&msg, &payload);
+                    mavlink_msg_fence_status_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.breach_status, payload.breach_count, payload.breach_type, payload.breach_time, payload.breach_mitigation);
+                    mavlink_msg_fence_status_send(MAVLINK_COMM_0, payload.breach_status, payload.breach_count, payload.breach_type, payload.breach_time, payload.breach_mitigation);
+                    break;
+                }
+                case MAVLINK_MSG_ID_MAG_CAL_REPORT: {
+                    mavlink_mag_cal_report_t payload;
+                    mavlink_msg_mag_cal_report_decode(&msg, &payload);
+                    mavlink_msg_mag_cal_report_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.compass_id, payload.cal_mask, payload.cal_status, payload.autosaved, payload.fitness, payload.ofs_x, payload.ofs_y, payload.ofs_z, payload.diag_x, payload.diag_y, payload.diag_z, payload.offdiag_x, payload.offdiag_y, payload.offdiag_z, payload.orientation_confidence, payload.old_orientation, payload.new_orientation, payload.scale_factor);
+                    mavlink_msg_mag_cal_report_send(MAVLINK_COMM_0, payload.compass_id, payload.cal_mask, payload.cal_status, payload.autosaved, payload.fitness, payload.ofs_x, payload.ofs_y, payload.ofs_z, payload.diag_x, payload.diag_y, payload.diag_z, payload.offdiag_x, payload.offdiag_y, payload.offdiag_z, payload.orientation_confidence, payload.old_orientation, payload.new_orientation, payload.scale_factor);
+                    break;
+                }
+                case MAVLINK_MSG_ID_EFI_STATUS: {
+                    mavlink_efi_status_t payload;
+                    mavlink_msg_efi_status_decode(&msg, &payload);
+                    mavlink_msg_efi_status_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.health, payload.ecu_index, payload.rpm, payload.fuel_consumed, payload.fuel_flow, payload.engine_load, payload.throttle_position, payload.spark_dwell_time, payload.barometric_pressure, payload.intake_manifold_pressure, payload.intake_manifold_temperature, payload.cylinder_head_temperature, payload.ignition_timing, payload.injection_time, payload.exhaust_gas_temperature, payload.throttle_out, payload.pt_compensation, payload.ignition_voltage, payload.fuel_pressure);
+                    mavlink_msg_efi_status_send(MAVLINK_COMM_0, payload.health, payload.ecu_index, payload.rpm, payload.fuel_consumed, payload.fuel_flow, payload.engine_load, payload.throttle_position, payload.spark_dwell_time, payload.barometric_pressure, payload.intake_manifold_pressure, payload.intake_manifold_temperature, payload.cylinder_head_temperature, payload.ignition_timing, payload.injection_time, payload.exhaust_gas_temperature, payload.throttle_out, payload.pt_compensation, payload.ignition_voltage, payload.fuel_pressure);
+                    break;
+                }
+                case MAVLINK_MSG_ID_ESTIMATOR_STATUS: {
+                    mavlink_estimator_status_t payload;
+                    mavlink_msg_estimator_status_decode(&msg, &payload);
+                    mavlink_msg_estimator_status_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.flags, payload.vel_ratio, payload.pos_horiz_ratio, payload.pos_vert_ratio, payload.mag_ratio, payload.hagl_ratio, payload.tas_ratio, payload.pos_horiz_accuracy, payload.pos_vert_accuracy);
+                    mavlink_msg_estimator_status_send(MAVLINK_COMM_0, payload.time_usec, payload.flags, payload.vel_ratio, payload.pos_horiz_ratio, payload.pos_vert_ratio, payload.mag_ratio, payload.hagl_ratio, payload.tas_ratio, payload.pos_horiz_accuracy, payload.pos_vert_accuracy);
+                    break;
+                }
+                case MAVLINK_MSG_ID_WIND_COV: {
+                    mavlink_wind_cov_t payload;
+                    mavlink_msg_wind_cov_decode(&msg, &payload);
+                    mavlink_msg_wind_cov_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.wind_x, payload.wind_y, payload.wind_z, payload.var_horiz, payload.var_vert, payload.wind_alt, payload.horiz_accuracy, payload.vert_accuracy);
+                    mavlink_msg_wind_cov_send(MAVLINK_COMM_0, payload.time_usec, payload.wind_x, payload.wind_y, payload.wind_z, payload.var_horiz, payload.var_vert, payload.wind_alt, payload.horiz_accuracy, payload.vert_accuracy);
+                    break;
+                }
+                case MAVLINK_MSG_ID_GPS_INPUT: {
+                    mavlink_gps_input_t payload;
+                    mavlink_msg_gps_input_decode(&msg, &payload);
+                    mavlink_msg_gps_input_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.gps_id, payload.ignore_flags, payload.time_week_ms, payload.time_week, payload.fix_type, payload.lat, payload.lon, payload.alt, payload.hdop, payload.vdop, payload.vn, payload.ve, payload.vd, payload.speed_accuracy, payload.horiz_accuracy, payload.vert_accuracy, payload.satellites_visible, payload.yaw);
+                    mavlink_msg_gps_input_send(MAVLINK_COMM_0, payload.time_usec, payload.gps_id, payload.ignore_flags, payload.time_week_ms, payload.time_week, payload.fix_type, payload.lat, payload.lon, payload.alt, payload.hdop, payload.vdop, payload.vn, payload.ve, payload.vd, payload.speed_accuracy, payload.horiz_accuracy, payload.vert_accuracy, payload.satellites_visible, payload.yaw);
+                    break;
+                }
+                case MAVLINK_MSG_ID_GPS_RTCM_DATA: {
+                    mavlink_gps_rtcm_data_t payload;
+                    mavlink_msg_gps_rtcm_data_decode(&msg, &payload);
+                    mavlink_msg_gps_rtcm_data_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.flags, payload.len, payload.data);
+                    mavlink_msg_gps_rtcm_data_send(MAVLINK_COMM_0, payload.flags, payload.len, payload.data);
+                    break;
+                }
+                case MAVLINK_MSG_ID_HIGH_LATENCY: {
+                    mavlink_high_latency_t payload;
+                    mavlink_msg_high_latency_decode(&msg, &payload);
+                    mavlink_msg_high_latency_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.base_mode, payload.custom_mode, payload.landed_state, payload.roll, payload.pitch, payload.heading, payload.throttle, payload.heading_sp, payload.latitude, payload.longitude, payload.altitude_amsl, payload.altitude_sp, payload.airspeed, payload.airspeed_sp, payload.groundspeed, payload.climb_rate, payload.gps_nsat, payload.gps_fix_type, payload.battery_remaining, payload.temperature, payload.temperature_air, payload.failsafe, payload.wp_num, payload.wp_distance);
+                    mavlink_msg_high_latency_send(MAVLINK_COMM_0, payload.base_mode, payload.custom_mode, payload.landed_state, payload.roll, payload.pitch, payload.heading, payload.throttle, payload.heading_sp, payload.latitude, payload.longitude, payload.altitude_amsl, payload.altitude_sp, payload.airspeed, payload.airspeed_sp, payload.groundspeed, payload.climb_rate, payload.gps_nsat, payload.gps_fix_type, payload.battery_remaining, payload.temperature, payload.temperature_air, payload.failsafe, payload.wp_num, payload.wp_distance);
+                    break;
+                }
+                case MAVLINK_MSG_ID_HIGH_LATENCY2: {
+                    mavlink_high_latency2_t payload;
+                    mavlink_msg_high_latency2_decode(&msg, &payload);
+                    mavlink_msg_high_latency2_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.timestamp, payload.type, payload.autopilot, payload.custom_mode, payload.latitude, payload.longitude, payload.altitude, payload.target_altitude, payload.heading, payload.target_heading, payload.target_distance, payload.throttle, payload.airspeed, payload.airspeed_sp, payload.groundspeed, payload.windspeed, payload.wind_heading, payload.eph, payload.epv, payload.temperature_air, payload.climb_rate, payload.battery, payload.wp_num, payload.failure_flags, payload.custom0, payload.custom1, payload.custom2);
+                    mavlink_msg_high_latency2_send(MAVLINK_COMM_0, payload.timestamp, payload.type, payload.autopilot, payload.custom_mode, payload.latitude, payload.longitude, payload.altitude, payload.target_altitude, payload.heading, payload.target_heading, payload.target_distance, payload.throttle, payload.airspeed, payload.airspeed_sp, payload.groundspeed, payload.windspeed, payload.wind_heading, payload.eph, payload.epv, payload.temperature_air, payload.climb_rate, payload.battery, payload.wp_num, payload.failure_flags, payload.custom0, payload.custom1, payload.custom2);
+                    break;
+                }
+                case MAVLINK_MSG_ID_VIBRATION: {
+                    mavlink_vibration_t payload;
+                    mavlink_msg_vibration_decode(&msg, &payload);
+                    mavlink_msg_vibration_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.vibration_x, payload.vibration_y, payload.vibration_z, payload.clipping_0, payload.clipping_1, payload.clipping_2);
+                    mavlink_msg_vibration_send(MAVLINK_COMM_0, payload.time_usec, payload.vibration_x, payload.vibration_y, payload.vibration_z, payload.clipping_0, payload.clipping_1, payload.clipping_2);
+                    break;
+                }
+                case MAVLINK_MSG_ID_HOME_POSITION: {
+                    mavlink_home_position_t payload;
+                    mavlink_msg_home_position_decode(&msg, &payload);
+                    mavlink_msg_home_position_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.latitude, payload.longitude, payload.altitude, payload.x, payload.y, payload.z, payload.q, payload.approach_x, payload.approach_y, payload.approach_z, payload.time_usec);
+                    mavlink_msg_home_position_send(MAVLINK_COMM_0, payload.latitude, payload.longitude, payload.altitude, payload.x, payload.y, payload.z, payload.q, payload.approach_x, payload.approach_y, payload.approach_z, payload.time_usec);
+                    break;
+                }
+                case MAVLINK_MSG_ID_SET_HOME_POSITION: {
+                    mavlink_set_home_position_t payload;
+                    mavlink_msg_set_home_position_decode(&msg, &payload);
+                    mavlink_msg_set_home_position_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.latitude, payload.longitude, payload.altitude, payload.x, payload.y, payload.z, payload.q, payload.approach_x, payload.approach_y, payload.approach_z, payload.time_usec);
+                    mavlink_msg_set_home_position_send(MAVLINK_COMM_0, payload.target_system, payload.latitude, payload.longitude, payload.altitude, payload.x, payload.y, payload.z, payload.q, payload.approach_x, payload.approach_y, payload.approach_z, payload.time_usec);
+                    break;
+                }
+                case MAVLINK_MSG_ID_MESSAGE_INTERVAL: {
+                    mavlink_message_interval_t payload;
+                    mavlink_msg_message_interval_decode(&msg, &payload);
+                    mavlink_msg_message_interval_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.message_id, payload.interval_us);
+                    mavlink_msg_message_interval_send(MAVLINK_COMM_0, payload.message_id, payload.interval_us);
+                    break;
+                }
+                case MAVLINK_MSG_ID_EXTENDED_SYS_STATE: {
+                    mavlink_extended_sys_state_t payload;
+                    mavlink_msg_extended_sys_state_decode(&msg, &payload);
+                    mavlink_msg_extended_sys_state_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.vtol_state, payload.landed_state);
+                    mavlink_msg_extended_sys_state_send(MAVLINK_COMM_0, payload.vtol_state, payload.landed_state);
+                    break;
+                }
+                case MAVLINK_MSG_ID_ADSB_VEHICLE: {
+                    mavlink_adsb_vehicle_t payload;
+                    mavlink_msg_adsb_vehicle_decode(&msg, &payload);
+                    mavlink_msg_adsb_vehicle_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.ICAO_address, payload.lat, payload.lon, payload.altitude_type, payload.altitude, payload.heading, payload.hor_velocity, payload.ver_velocity, payload.callsign, payload.emitter_type, payload.tslc, payload.flags, payload.squawk);
+                    mavlink_msg_adsb_vehicle_send(MAVLINK_COMM_0, payload.ICAO_address, payload.lat, payload.lon, payload.altitude_type, payload.altitude, payload.heading, payload.hor_velocity, payload.ver_velocity, payload.callsign, payload.emitter_type, payload.tslc, payload.flags, payload.squawk);
+                    break;
+                }
+                case MAVLINK_MSG_ID_COLLISION: {
+                    mavlink_collision_t payload;
+                    mavlink_msg_collision_decode(&msg, &payload);
+                    mavlink_msg_collision_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.src, payload.id, payload.action, payload.threat_level, payload.time_to_minimum_delta, payload.altitude_minimum_delta, payload.horizontal_minimum_delta);
+                    mavlink_msg_collision_send(MAVLINK_COMM_0, payload.src, payload.id, payload.action, payload.threat_level, payload.time_to_minimum_delta, payload.altitude_minimum_delta, payload.horizontal_minimum_delta);
+                    break;
+                }
+                case MAVLINK_MSG_ID_V2_EXTENSION: {
+                    mavlink_v2_extension_t payload;
+                    mavlink_msg_v2_extension_decode(&msg, &payload);
+                    mavlink_msg_v2_extension_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_network, payload.target_system, payload.target_component, payload.message_type, payload.payload);
+                    mavlink_msg_v2_extension_send(MAVLINK_COMM_0, payload.target_network, payload.target_system, payload.target_component, payload.message_type, payload.payload);
+                    break;
+                }
+                case MAVLINK_MSG_ID_MEMORY_VECT: {
+                    mavlink_memory_vect_t payload;
+                    mavlink_msg_memory_vect_decode(&msg, &payload);
+                    mavlink_msg_memory_vect_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.address, payload.ver, payload.type, payload.value);
+                    mavlink_msg_memory_vect_send(MAVLINK_COMM_0, payload.address, payload.ver, payload.type, payload.value);
+                    break;
+                }
+                case MAVLINK_MSG_ID_DEBUG_VECT: {
+                    mavlink_debug_vect_t payload;
+                    mavlink_msg_debug_vect_decode(&msg, &payload);
+                    mavlink_msg_debug_vect_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.name, payload.time_usec, payload.x, payload.y, payload.z);
+                    mavlink_msg_debug_vect_send(MAVLINK_COMM_0, payload.name, payload.time_usec, payload.x, payload.y, payload.z);
+                    break;
+                }
+                case MAVLINK_MSG_ID_NAMED_VALUE_FLOAT: {
+                    mavlink_named_value_float_t payload;
+                    mavlink_msg_named_value_float_decode(&msg, &payload);
+                    mavlink_msg_named_value_float_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.name, payload.value);
+                    mavlink_msg_named_value_float_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.name, payload.value);
+                    break;
+                }
+                case MAVLINK_MSG_ID_NAMED_VALUE_INT: {
+                    mavlink_named_value_int_t payload;
+                    mavlink_msg_named_value_int_decode(&msg, &payload);
+                    mavlink_msg_named_value_int_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.name, payload.value);
+                    mavlink_msg_named_value_int_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.name, payload.value);
+                    break;
+                }
+                case MAVLINK_MSG_ID_STATUSTEXT: {
+                    mavlink_statustext_t payload;
+                    mavlink_msg_statustext_decode(&msg, &payload);
+                    mavlink_msg_statustext_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.severity, payload.text, payload.id, payload.chunk_seq);
+                    mavlink_msg_statustext_send(MAVLINK_COMM_0, payload.severity, payload.text, payload.id, payload.chunk_seq);
+                    break;
+                }
+                case MAVLINK_MSG_ID_DEBUG: {
+                    mavlink_debug_t payload;
+                    mavlink_msg_debug_decode(&msg, &payload);
+                    mavlink_msg_debug_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.ind, payload.value);
+                    mavlink_msg_debug_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.ind, payload.value);
+                    break;
+                }
+                case MAVLINK_MSG_ID_SETUP_SIGNING: {
+                    mavlink_setup_signing_t payload;
+                    mavlink_msg_setup_signing_decode(&msg, &payload);
+                    mavlink_msg_setup_signing_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.secret_key, payload.initial_timestamp);
+                    mavlink_msg_setup_signing_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.secret_key, payload.initial_timestamp);
+                    break;
+                }
+                case MAVLINK_MSG_ID_BUTTON_CHANGE: {
+                    mavlink_button_change_t payload;
+                    mavlink_msg_button_change_decode(&msg, &payload);
+                    mavlink_msg_button_change_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.last_change_ms, payload.state);
+                    mavlink_msg_button_change_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.last_change_ms, payload.state);
+                    break;
+                }
+                case MAVLINK_MSG_ID_PLAY_TUNE: {
+                    mavlink_play_tune_t payload;
+                    mavlink_msg_play_tune_decode(&msg, &payload);
+                    mavlink_msg_play_tune_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.tune, payload.tune2);
+                    mavlink_msg_play_tune_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.tune, payload.tune2);
+                    break;
+                }
+                case MAVLINK_MSG_ID_CAMERA_INFORMATION: {
+                    mavlink_camera_information_t payload;
+                    mavlink_msg_camera_information_decode(&msg, &payload);
+                    mavlink_msg_camera_information_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.vendor_name, payload.model_name, payload.firmware_version, payload.focal_length, payload.sensor_size_h, payload.sensor_size_v, payload.resolution_h, payload.resolution_v, payload.lens_id, payload.flags, payload.cam_definition_version, payload.cam_definition_uri, payload.gimbal_device_id, payload.camera_device_id);
+                    mavlink_msg_camera_information_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.vendor_name, payload.model_name, payload.firmware_version, payload.focal_length, payload.sensor_size_h, payload.sensor_size_v, payload.resolution_h, payload.resolution_v, payload.lens_id, payload.flags, payload.cam_definition_version, payload.cam_definition_uri, payload.gimbal_device_id, payload.camera_device_id);
+                    break;
+                }
+                case MAVLINK_MSG_ID_CAMERA_SETTINGS: {
+                    mavlink_camera_settings_t payload;
+                    mavlink_msg_camera_settings_decode(&msg, &payload);
+                    mavlink_msg_camera_settings_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.mode_id, payload.zoomLevel, payload.focusLevel, payload.camera_device_id);
+                    mavlink_msg_camera_settings_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.mode_id, payload.zoomLevel, payload.focusLevel, payload.camera_device_id);
+                    break;
+                }
+                case MAVLINK_MSG_ID_STORAGE_INFORMATION: {
+                    mavlink_storage_information_t payload;
+                    mavlink_msg_storage_information_decode(&msg, &payload);
+                    mavlink_msg_storage_information_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.storage_id, payload.storage_count, payload.status, payload.total_capacity, payload.used_capacity, payload.available_capacity, payload.read_speed, payload.write_speed, payload.type, payload.name, payload.storage_usage);
+                    mavlink_msg_storage_information_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.storage_id, payload.storage_count, payload.status, payload.total_capacity, payload.used_capacity, payload.available_capacity, payload.read_speed, payload.write_speed, payload.type, payload.name, payload.storage_usage);
+                    break;
+                }
+                case MAVLINK_MSG_ID_CAMERA_CAPTURE_STATUS: {
+                    mavlink_camera_capture_status_t payload;
+                    mavlink_msg_camera_capture_status_decode(&msg, &payload);
+                    mavlink_msg_camera_capture_status_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.image_status, payload.video_status, payload.image_interval, payload.recording_time_ms, payload.available_capacity, payload.image_count, payload.camera_device_id);
+                    mavlink_msg_camera_capture_status_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.image_status, payload.video_status, payload.image_interval, payload.recording_time_ms, payload.available_capacity, payload.image_count, payload.camera_device_id);
+                    break;
+                }
+                case MAVLINK_MSG_ID_CAMERA_IMAGE_CAPTURED: {
+                    mavlink_camera_image_captured_t payload;
+                    mavlink_msg_camera_image_captured_decode(&msg, &payload);
+                    mavlink_msg_camera_image_captured_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.time_utc, payload.camera_id, payload.lat, payload.lon, payload.alt, payload.relative_alt, payload.q, payload.image_index, payload.capture_result, payload.file_url);
+                    mavlink_msg_camera_image_captured_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.time_utc, payload.camera_id, payload.lat, payload.lon, payload.alt, payload.relative_alt, payload.q, payload.image_index, payload.capture_result, payload.file_url);
+                    break;
+                }
+                case MAVLINK_MSG_ID_FLIGHT_INFORMATION: {
+                    mavlink_flight_information_t payload;
+                    mavlink_msg_flight_information_decode(&msg, &payload);
+                    mavlink_msg_flight_information_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.arming_time_utc, payload.takeoff_time_utc, payload.flight_uuid, payload.landing_time);
+                    mavlink_msg_flight_information_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.arming_time_utc, payload.takeoff_time_utc, payload.flight_uuid, payload.landing_time);
+                    break;
+                }
+                case MAVLINK_MSG_ID_MOUNT_ORIENTATION: {
+                    mavlink_mount_orientation_t payload;
+                    mavlink_msg_mount_orientation_decode(&msg, &payload);
+                    mavlink_msg_mount_orientation_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.roll, payload.pitch, payload.yaw, payload.yaw_absolute);
+                    mavlink_msg_mount_orientation_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.roll, payload.pitch, payload.yaw, payload.yaw_absolute);
+                    break;
+                }
+                case MAVLINK_MSG_ID_LOGGING_DATA: {
+                    mavlink_logging_data_t payload;
+                    mavlink_msg_logging_data_decode(&msg, &payload);
+                    mavlink_msg_logging_data_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.sequence, payload.length, payload.first_message_offset, payload.data);
+                    mavlink_msg_logging_data_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.sequence, payload.length, payload.first_message_offset, payload.data);
+                    break;
+                }
+                case MAVLINK_MSG_ID_LOGGING_DATA_ACKED: {
+                    mavlink_logging_data_acked_t payload;
+                    mavlink_msg_logging_data_acked_decode(&msg, &payload);
+                    mavlink_msg_logging_data_acked_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.sequence, payload.length, payload.first_message_offset, payload.data);
+                    mavlink_msg_logging_data_acked_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.sequence, payload.length, payload.first_message_offset, payload.data);
+                    break;
+                }
+                case MAVLINK_MSG_ID_LOGGING_ACK: {
+                    mavlink_logging_ack_t payload;
+                    mavlink_msg_logging_ack_decode(&msg, &payload);
+                    mavlink_msg_logging_ack_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.sequence);
+                    mavlink_msg_logging_ack_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.sequence);
+                    break;
+                }
+                case MAVLINK_MSG_ID_VIDEO_STREAM_INFORMATION: {
+                    mavlink_video_stream_information_t payload;
+                    mavlink_msg_video_stream_information_decode(&msg, &payload);
+                    mavlink_msg_video_stream_information_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.stream_id, payload.count, payload.type, payload.flags, payload.framerate, payload.resolution_h, payload.resolution_v, payload.bitrate, payload.rotation, payload.hfov, payload.name, payload.uri, payload.encoding, payload.camera_device_id);
+                    mavlink_msg_video_stream_information_send(MAVLINK_COMM_0, payload.stream_id, payload.count, payload.type, payload.flags, payload.framerate, payload.resolution_h, payload.resolution_v, payload.bitrate, payload.rotation, payload.hfov, payload.name, payload.uri, payload.encoding, payload.camera_device_id);
+                    break;
+                }
+                case MAVLINK_MSG_ID_VIDEO_STREAM_STATUS: {
+                    mavlink_video_stream_status_t payload;
+                    mavlink_msg_video_stream_status_decode(&msg, &payload);
+                    mavlink_msg_video_stream_status_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.stream_id, payload.flags, payload.framerate, payload.resolution_h, payload.resolution_v, payload.bitrate, payload.rotation, payload.hfov, payload.camera_device_id);
+                    mavlink_msg_video_stream_status_send(MAVLINK_COMM_0, payload.stream_id, payload.flags, payload.framerate, payload.resolution_h, payload.resolution_v, payload.bitrate, payload.rotation, payload.hfov, payload.camera_device_id);
+                    break;
+                }
+                case MAVLINK_MSG_ID_CAMERA_FOV_STATUS: {
+                    mavlink_camera_fov_status_t payload;
+                    mavlink_msg_camera_fov_status_decode(&msg, &payload);
+                    mavlink_msg_camera_fov_status_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.lat_camera, payload.lon_camera, payload.alt_camera, payload.lat_image, payload.lon_image, payload.alt_image, payload.q, payload.hfov, payload.vfov, payload.camera_device_id);
+                    mavlink_msg_camera_fov_status_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.lat_camera, payload.lon_camera, payload.alt_camera, payload.lat_image, payload.lon_image, payload.alt_image, payload.q, payload.hfov, payload.vfov, payload.camera_device_id);
+                    break;
+                }
+                case MAVLINK_MSG_ID_CAMERA_TRACKING_IMAGE_STATUS: {
+                    mavlink_camera_tracking_image_status_t payload;
+                    mavlink_msg_camera_tracking_image_status_decode(&msg, &payload);
+                    mavlink_msg_camera_tracking_image_status_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.tracking_status, payload.tracking_mode, payload.target_data, payload.point_x, payload.point_y, payload.radius, payload.rec_top_x, payload.rec_top_y, payload.rec_bottom_x, payload.rec_bottom_y, payload.camera_device_id);
+                    mavlink_msg_camera_tracking_image_status_send(MAVLINK_COMM_0, payload.tracking_status, payload.tracking_mode, payload.target_data, payload.point_x, payload.point_y, payload.radius, payload.rec_top_x, payload.rec_top_y, payload.rec_bottom_x, payload.rec_bottom_y, payload.camera_device_id);
+                    break;
+                }
+                case MAVLINK_MSG_ID_CAMERA_TRACKING_GEO_STATUS: {
+                    mavlink_camera_tracking_geo_status_t payload;
+                    mavlink_msg_camera_tracking_geo_status_decode(&msg, &payload);
+                    mavlink_msg_camera_tracking_geo_status_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.tracking_status, payload.lat, payload.lon, payload.alt, payload.h_acc, payload.v_acc, payload.vel_n, payload.vel_e, payload.vel_d, payload.vel_acc, payload.dist, payload.hdg, payload.hdg_acc, payload.camera_device_id);
+                    mavlink_msg_camera_tracking_geo_status_send(MAVLINK_COMM_0, payload.tracking_status, payload.lat, payload.lon, payload.alt, payload.h_acc, payload.v_acc, payload.vel_n, payload.vel_e, payload.vel_d, payload.vel_acc, payload.dist, payload.hdg, payload.hdg_acc, payload.camera_device_id);
+                    break;
+                }
+                case MAVLINK_MSG_ID_CAMERA_THERMAL_RANGE: {
+                    mavlink_camera_thermal_range_t payload;
+                    mavlink_msg_camera_thermal_range_decode(&msg, &payload);
+                    mavlink_msg_camera_thermal_range_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.stream_id, payload.camera_device_id, payload.max, payload.max_point_x, payload.max_point_y, payload.min, payload.min_point_x, payload.min_point_y);
+                    mavlink_msg_camera_thermal_range_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.stream_id, payload.camera_device_id, payload.max, payload.max_point_x, payload.max_point_y, payload.min, payload.min_point_x, payload.min_point_y);
+                    break;
+                }
+                case MAVLINK_MSG_ID_GIMBAL_MANAGER_INFORMATION: {
+                    mavlink_gimbal_manager_information_t payload;
+                    mavlink_msg_gimbal_manager_information_decode(&msg, &payload);
+                    mavlink_msg_gimbal_manager_information_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.cap_flags, payload.gimbal_device_id, payload.roll_min, payload.roll_max, payload.pitch_min, payload.pitch_max, payload.yaw_min, payload.yaw_max);
+                    mavlink_msg_gimbal_manager_information_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.cap_flags, payload.gimbal_device_id, payload.roll_min, payload.roll_max, payload.pitch_min, payload.pitch_max, payload.yaw_min, payload.yaw_max);
+                    break;
+                }
+                case MAVLINK_MSG_ID_GIMBAL_MANAGER_STATUS: {
+                    mavlink_gimbal_manager_status_t payload;
+                    mavlink_msg_gimbal_manager_status_decode(&msg, &payload);
+                    mavlink_msg_gimbal_manager_status_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.flags, payload.gimbal_device_id, payload.primary_control_sysid, payload.primary_control_compid, payload.secondary_control_sysid, payload.secondary_control_compid);
+                    mavlink_msg_gimbal_manager_status_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.flags, payload.gimbal_device_id, payload.primary_control_sysid, payload.primary_control_compid, payload.secondary_control_sysid, payload.secondary_control_compid);
+                    break;
+                }
+                case MAVLINK_MSG_ID_GIMBAL_MANAGER_SET_ATTITUDE: {
+                    mavlink_gimbal_manager_set_attitude_t payload;
+                    mavlink_msg_gimbal_manager_set_attitude_decode(&msg, &payload);
+                    mavlink_msg_gimbal_manager_set_attitude_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.flags, payload.gimbal_device_id, payload.q, payload.angular_velocity_x, payload.angular_velocity_y, payload.angular_velocity_z);
+                    mavlink_msg_gimbal_manager_set_attitude_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.flags, payload.gimbal_device_id, payload.q, payload.angular_velocity_x, payload.angular_velocity_y, payload.angular_velocity_z);
+                    break;
+                }
+                case MAVLINK_MSG_ID_GIMBAL_DEVICE_INFORMATION: {
+                    mavlink_gimbal_device_information_t payload;
+                    mavlink_msg_gimbal_device_information_decode(&msg, &payload);
+                    mavlink_msg_gimbal_device_information_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.vendor_name, payload.model_name, payload.custom_name, payload.firmware_version, payload.hardware_version, payload.uid, payload.cap_flags, payload.custom_cap_flags, payload.roll_min, payload.roll_max, payload.pitch_min, payload.pitch_max, payload.yaw_min, payload.yaw_max, payload.gimbal_device_id);
+                    mavlink_msg_gimbal_device_information_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.vendor_name, payload.model_name, payload.custom_name, payload.firmware_version, payload.hardware_version, payload.uid, payload.cap_flags, payload.custom_cap_flags, payload.roll_min, payload.roll_max, payload.pitch_min, payload.pitch_max, payload.yaw_min, payload.yaw_max, payload.gimbal_device_id);
+                    break;
+                }
+                case MAVLINK_MSG_ID_GIMBAL_DEVICE_SET_ATTITUDE: {
+                    mavlink_gimbal_device_set_attitude_t payload;
+                    mavlink_msg_gimbal_device_set_attitude_decode(&msg, &payload);
+                    mavlink_msg_gimbal_device_set_attitude_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.flags, payload.q, payload.angular_velocity_x, payload.angular_velocity_y, payload.angular_velocity_z);
+                    mavlink_msg_gimbal_device_set_attitude_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.flags, payload.q, payload.angular_velocity_x, payload.angular_velocity_y, payload.angular_velocity_z);
+                    break;
+                }
+                case MAVLINK_MSG_ID_GIMBAL_DEVICE_ATTITUDE_STATUS: {
+                    mavlink_gimbal_device_attitude_status_t payload;
+                    mavlink_msg_gimbal_device_attitude_status_decode(&msg, &payload);
+                    mavlink_msg_gimbal_device_attitude_status_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.time_boot_ms, payload.flags, payload.q, payload.angular_velocity_x, payload.angular_velocity_y, payload.angular_velocity_z, payload.failure_flags, payload.delta_yaw, payload.delta_yaw_velocity, payload.gimbal_device_id);
+                    mavlink_msg_gimbal_device_attitude_status_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.time_boot_ms, payload.flags, payload.q, payload.angular_velocity_x, payload.angular_velocity_y, payload.angular_velocity_z, payload.failure_flags, payload.delta_yaw, payload.delta_yaw_velocity, payload.gimbal_device_id);
+                    break;
+                }
+                case MAVLINK_MSG_ID_AUTOPILOT_STATE_FOR_GIMBAL_DEVICE: {
+                    mavlink_autopilot_state_for_gimbal_device_t payload;
+                    mavlink_msg_autopilot_state_for_gimbal_device_decode(&msg, &payload);
+                    mavlink_msg_autopilot_state_for_gimbal_device_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.time_boot_us, payload.q, payload.q_estimated_delay_us, payload.vx, payload.vy, payload.vz, payload.v_estimated_delay_us, payload.feed_forward_angular_velocity_z, payload.estimator_status, payload.landed_state, payload.angular_velocity_z);
+                    mavlink_msg_autopilot_state_for_gimbal_device_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.time_boot_us, payload.q, payload.q_estimated_delay_us, payload.vx, payload.vy, payload.vz, payload.v_estimated_delay_us, payload.feed_forward_angular_velocity_z, payload.estimator_status, payload.landed_state, payload.angular_velocity_z);
+                    break;
+                }
+                case MAVLINK_MSG_ID_GIMBAL_MANAGER_SET_PITCHYAW: {
+                    mavlink_gimbal_manager_set_pitchyaw_t payload;
+                    mavlink_msg_gimbal_manager_set_pitchyaw_decode(&msg, &payload);
+                    mavlink_msg_gimbal_manager_set_pitchyaw_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.flags, payload.gimbal_device_id, payload.pitch, payload.yaw, payload.pitch_rate, payload.yaw_rate);
+                    mavlink_msg_gimbal_manager_set_pitchyaw_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.flags, payload.gimbal_device_id, payload.pitch, payload.yaw, payload.pitch_rate, payload.yaw_rate);
+                    break;
+                }
+                case MAVLINK_MSG_ID_GIMBAL_MANAGER_SET_MANUAL_CONTROL: {
+                    mavlink_gimbal_manager_set_manual_control_t payload;
+                    mavlink_msg_gimbal_manager_set_manual_control_decode(&msg, &payload);
+                    mavlink_msg_gimbal_manager_set_manual_control_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.flags, payload.gimbal_device_id, payload.pitch, payload.yaw, payload.pitch_rate, payload.yaw_rate);
+                    mavlink_msg_gimbal_manager_set_manual_control_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.flags, payload.gimbal_device_id, payload.pitch, payload.yaw, payload.pitch_rate, payload.yaw_rate);
+                    break;
+                }
+                case MAVLINK_MSG_ID_ESC_INFO: {
+                    mavlink_esc_info_t payload;
+                    mavlink_msg_esc_info_decode(&msg, &payload);
+                    mavlink_msg_esc_info_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.index, payload.time_usec, payload.counter, payload.count, payload.connection_type, payload.info, payload.failure_flags, payload.error_count, payload.temperature);
+                    mavlink_msg_esc_info_send(MAVLINK_COMM_0, payload.index, payload.time_usec, payload.counter, payload.count, payload.connection_type, payload.info, payload.failure_flags, payload.error_count, payload.temperature);
+                    break;
+                }
+                case MAVLINK_MSG_ID_ESC_STATUS: {
+                    mavlink_esc_status_t payload;
+                    mavlink_msg_esc_status_decode(&msg, &payload);
+                    mavlink_msg_esc_status_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.index, payload.time_usec, payload.rpm, payload.voltage, payload.current);
+                    mavlink_msg_esc_status_send(MAVLINK_COMM_0, payload.index, payload.time_usec, payload.rpm, payload.voltage, payload.current);
+                    break;
+                }
+                case MAVLINK_MSG_ID_WIFI_CONFIG_AP: {
+                    mavlink_wifi_config_ap_t payload;
+                    mavlink_msg_wifi_config_ap_decode(&msg, &payload);
+                    mavlink_msg_wifi_config_ap_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.ssid, payload.password, payload.mode, payload.response);
+                    mavlink_msg_wifi_config_ap_send(MAVLINK_COMM_0, payload.ssid, payload.password, payload.mode, payload.response);
+                    break;
+                }
+                case MAVLINK_MSG_ID_AIS_VESSEL: {
+                    mavlink_ais_vessel_t payload;
+                    mavlink_msg_ais_vessel_decode(&msg, &payload);
+                    mavlink_msg_ais_vessel_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.MMSI, payload.lat, payload.lon, payload.COG, payload.heading, payload.velocity, payload.turn_rate, payload.navigational_status, payload.type, payload.dimension_bow, payload.dimension_stern, payload.dimension_port, payload.dimension_starboard, payload.callsign, payload.name, payload.tslc, payload.flags);
+                    mavlink_msg_ais_vessel_send(MAVLINK_COMM_0, payload.MMSI, payload.lat, payload.lon, payload.COG, payload.heading, payload.velocity, payload.turn_rate, payload.navigational_status, payload.type, payload.dimension_bow, payload.dimension_stern, payload.dimension_port, payload.dimension_starboard, payload.callsign, payload.name, payload.tslc, payload.flags);
+                    break;
+                }
+                case MAVLINK_MSG_ID_UAVCAN_NODE_STATUS: {
+                    mavlink_uavcan_node_status_t payload;
+                    mavlink_msg_uavcan_node_status_decode(&msg, &payload);
+                    mavlink_msg_uavcan_node_status_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.uptime_sec, payload.health, payload.mode, payload.sub_mode, payload.vendor_specific_status_code);
+                    mavlink_msg_uavcan_node_status_send(MAVLINK_COMM_0, payload.time_usec, payload.uptime_sec, payload.health, payload.mode, payload.sub_mode, payload.vendor_specific_status_code);
+                    break;
+                }
+                case MAVLINK_MSG_ID_UAVCAN_NODE_INFO: {
+                    mavlink_uavcan_node_info_t payload;
+                    mavlink_msg_uavcan_node_info_decode(&msg, &payload);
+                    mavlink_msg_uavcan_node_info_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.uptime_sec, payload.name, payload.hw_version_major, payload.hw_version_minor, payload.hw_unique_id, payload.sw_version_major, payload.sw_version_minor, payload.sw_vcs_commit);
+                    mavlink_msg_uavcan_node_info_send(MAVLINK_COMM_0, payload.time_usec, payload.uptime_sec, payload.name, payload.hw_version_major, payload.hw_version_minor, payload.hw_unique_id, payload.sw_version_major, payload.sw_version_minor, payload.sw_vcs_commit);
+                    break;
+                }
+                case MAVLINK_MSG_ID_PARAM_EXT_REQUEST_READ: {
+                    mavlink_param_ext_request_read_t payload;
+                    mavlink_msg_param_ext_request_read_decode(&msg, &payload);
+                    mavlink_msg_param_ext_request_read_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.param_id, payload.param_index);
+                    mavlink_msg_param_ext_request_read_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.param_id, payload.param_index);
+                    break;
+                }
+                case MAVLINK_MSG_ID_PARAM_EXT_REQUEST_LIST: {
+                    mavlink_param_ext_request_list_t payload;
+                    mavlink_msg_param_ext_request_list_decode(&msg, &payload);
+                    mavlink_msg_param_ext_request_list_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component);
+                    mavlink_msg_param_ext_request_list_send(MAVLINK_COMM_0, payload.target_system, payload.target_component);
+                    break;
+                }
+                case MAVLINK_MSG_ID_PARAM_EXT_VALUE: {
+                    mavlink_param_ext_value_t payload;
+                    mavlink_msg_param_ext_value_decode(&msg, &payload);
+                    mavlink_msg_param_ext_value_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.param_id, payload.param_value, payload.param_type, payload.param_count, payload.param_index);
+                    mavlink_msg_param_ext_value_send(MAVLINK_COMM_0, payload.param_id, payload.param_value, payload.param_type, payload.param_count, payload.param_index);
+                    break;
+                }
+                case MAVLINK_MSG_ID_PARAM_EXT_SET: {
+                    mavlink_param_ext_set_t payload;
+                    mavlink_msg_param_ext_set_decode(&msg, &payload);
+                    mavlink_msg_param_ext_set_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.param_id, payload.param_value, payload.param_type);
+                    mavlink_msg_param_ext_set_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.param_id, payload.param_value, payload.param_type);
+                    break;
+                }
+                case MAVLINK_MSG_ID_PARAM_EXT_ACK: {
+                    mavlink_param_ext_ack_t payload;
+                    mavlink_msg_param_ext_ack_decode(&msg, &payload);
+                    mavlink_msg_param_ext_ack_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.param_id, payload.param_value, payload.param_type, payload.param_result);
+                    mavlink_msg_param_ext_ack_send(MAVLINK_COMM_0, payload.param_id, payload.param_value, payload.param_type, payload.param_result);
+                    break;
+                }
+                case MAVLINK_MSG_ID_OBSTACLE_DISTANCE: {
+                    mavlink_obstacle_distance_t payload;
+                    mavlink_msg_obstacle_distance_decode(&msg, &payload);
+                    mavlink_msg_obstacle_distance_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.sensor_type, payload.distances, payload.increment, payload.min_distance, payload.max_distance, payload.increment_f, payload.angle_offset, payload.frame);
+                    mavlink_msg_obstacle_distance_send(MAVLINK_COMM_0, payload.time_usec, payload.sensor_type, payload.distances, payload.increment, payload.min_distance, payload.max_distance, payload.increment_f, payload.angle_offset, payload.frame);
+                    break;
+                }
+                case MAVLINK_MSG_ID_ODOMETRY: {
+                    mavlink_odometry_t payload;
+                    mavlink_msg_odometry_decode(&msg, &payload);
+                    mavlink_msg_odometry_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.frame_id, payload.child_frame_id, payload.x, payload.y, payload.z, payload.q, payload.vx, payload.vy, payload.vz, payload.rollspeed, payload.pitchspeed, payload.yawspeed, payload.pose_covariance, payload.velocity_covariance, payload.reset_counter, payload.estimator_type, payload.quality);
+                    mavlink_msg_odometry_send(MAVLINK_COMM_0, payload.time_usec, payload.frame_id, payload.child_frame_id, payload.x, payload.y, payload.z, payload.q, payload.vx, payload.vy, payload.vz, payload.rollspeed, payload.pitchspeed, payload.yawspeed, payload.pose_covariance, payload.velocity_covariance, payload.reset_counter, payload.estimator_type, payload.quality);
+                    break;
+                }
+                case MAVLINK_MSG_ID_TRAJECTORY_REPRESENTATION_WAYPOINTS: {
+                    mavlink_trajectory_representation_waypoints_t payload;
+                    mavlink_msg_trajectory_representation_waypoints_decode(&msg, &payload);
+                    mavlink_msg_trajectory_representation_waypoints_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.valid_points, payload.pos_x, payload.pos_y, payload.pos_z, payload.vel_x, payload.vel_y, payload.vel_z, payload.acc_x, payload.acc_y, payload.acc_z, payload.pos_yaw, payload.vel_yaw, payload.command);
+                    mavlink_msg_trajectory_representation_waypoints_send(MAVLINK_COMM_0, payload.time_usec, payload.valid_points, payload.pos_x, payload.pos_y, payload.pos_z, payload.vel_x, payload.vel_y, payload.vel_z, payload.acc_x, payload.acc_y, payload.acc_z, payload.pos_yaw, payload.vel_yaw, payload.command);
+                    break;
+                }
+                case MAVLINK_MSG_ID_TRAJECTORY_REPRESENTATION_BEZIER: {
+                    mavlink_trajectory_representation_bezier_t payload;
+                    mavlink_msg_trajectory_representation_bezier_decode(&msg, &payload);
+                    mavlink_msg_trajectory_representation_bezier_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.valid_points, payload.pos_x, payload.pos_y, payload.pos_z, payload.delta, payload.pos_yaw);
+                    mavlink_msg_trajectory_representation_bezier_send(MAVLINK_COMM_0, payload.time_usec, payload.valid_points, payload.pos_x, payload.pos_y, payload.pos_z, payload.delta, payload.pos_yaw);
+                    break;
+                }
+                case MAVLINK_MSG_ID_CELLULAR_STATUS: {
+                    mavlink_cellular_status_t payload;
+                    mavlink_msg_cellular_status_decode(&msg, &payload);
+                    mavlink_msg_cellular_status_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.status, payload.failure_reason, payload.type, payload.quality, payload.mcc, payload.mnc, payload.lac);
+                    mavlink_msg_cellular_status_send(MAVLINK_COMM_0, payload.status, payload.failure_reason, payload.type, payload.quality, payload.mcc, payload.mnc, payload.lac);
+                    break;
+                }
+                case MAVLINK_MSG_ID_ISBD_LINK_STATUS: {
+                    mavlink_isbd_link_status_t payload;
+                    mavlink_msg_isbd_link_status_decode(&msg, &payload);
+                    mavlink_msg_isbd_link_status_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.timestamp, payload.last_heartbeat, payload.failed_sessions, payload.successful_sessions, payload.signal_quality, payload.ring_pending, payload.tx_session_pending, payload.rx_session_pending);
+                    mavlink_msg_isbd_link_status_send(MAVLINK_COMM_0, payload.timestamp, payload.last_heartbeat, payload.failed_sessions, payload.successful_sessions, payload.signal_quality, payload.ring_pending, payload.tx_session_pending, payload.rx_session_pending);
+                    break;
+                }
+                case MAVLINK_MSG_ID_CELLULAR_CONFIG: {
+                    mavlink_cellular_config_t payload;
+                    mavlink_msg_cellular_config_decode(&msg, &payload);
+                    mavlink_msg_cellular_config_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.enable_lte, payload.enable_pin, payload.pin, payload.new_pin, payload.apn, payload.puk, payload.roaming, payload.response);
+                    mavlink_msg_cellular_config_send(MAVLINK_COMM_0, payload.enable_lte, payload.enable_pin, payload.pin, payload.new_pin, payload.apn, payload.puk, payload.roaming, payload.response);
+                    break;
+                }
+                case MAVLINK_MSG_ID_RAW_RPM: {
+                    mavlink_raw_rpm_t payload;
+                    mavlink_msg_raw_rpm_decode(&msg, &payload);
+                    mavlink_msg_raw_rpm_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.index, payload.frequency);
+                    mavlink_msg_raw_rpm_send(MAVLINK_COMM_0, payload.index, payload.frequency);
+                    break;
+                }
+                case MAVLINK_MSG_ID_UTM_GLOBAL_POSITION: {
+                    mavlink_utm_global_position_t payload;
+                    mavlink_msg_utm_global_position_decode(&msg, &payload);
+                    mavlink_msg_utm_global_position_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time, payload.uas_id, payload.lat, payload.lon, payload.alt, payload.relative_alt, payload.vx, payload.vy, payload.vz, payload.h_acc, payload.v_acc, payload.vel_acc, payload.next_lat, payload.next_lon, payload.next_alt, payload.update_rate, payload.flight_state, payload.flags);
+                    mavlink_msg_utm_global_position_send(MAVLINK_COMM_0, payload.time, payload.uas_id, payload.lat, payload.lon, payload.alt, payload.relative_alt, payload.vx, payload.vy, payload.vz, payload.h_acc, payload.v_acc, payload.vel_acc, payload.next_lat, payload.next_lon, payload.next_alt, payload.update_rate, payload.flight_state, payload.flags);
+                    break;
+                }
+                case MAVLINK_MSG_ID_DEBUG_FLOAT_ARRAY: {
+                    mavlink_debug_float_array_t payload;
+                    mavlink_msg_debug_float_array_decode(&msg, &payload);
+                    mavlink_msg_debug_float_array_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.name, payload.array_id, payload.data);
+                    mavlink_msg_debug_float_array_send(MAVLINK_COMM_0, payload.time_usec, payload.name, payload.array_id, payload.data);
+                    break;
+                }
+                case MAVLINK_MSG_ID_ORBIT_EXECUTION_STATUS: {
+                    mavlink_orbit_execution_status_t payload;
+                    mavlink_msg_orbit_execution_status_decode(&msg, &payload);
+                    mavlink_msg_orbit_execution_status_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.radius, payload.frame, payload.x, payload.y, payload.z);
+                    mavlink_msg_orbit_execution_status_send(MAVLINK_COMM_0, payload.time_usec, payload.radius, payload.frame, payload.x, payload.y, payload.z);
+                    break;
+                }
+                case MAVLINK_MSG_ID_SMART_BATTERY_INFO: {
+                    mavlink_smart_battery_info_t payload;
+                    mavlink_msg_smart_battery_info_decode(&msg, &payload);
+                    mavlink_msg_smart_battery_info_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.id, payload.battery_function, payload.type, payload.capacity_full_specification, payload.capacity_full, payload.cycle_count, payload.serial_number, payload.device_name, payload.weight, payload.discharge_minimum_voltage, payload.charging_minimum_voltage, payload.resting_minimum_voltage, payload.charging_maximum_voltage, payload.cells_in_series, payload.discharge_maximum_current, payload.discharge_maximum_burst_current, payload.manufacture_date);
+                    mavlink_msg_smart_battery_info_send(MAVLINK_COMM_0, payload.id, payload.battery_function, payload.type, payload.capacity_full_specification, payload.capacity_full, payload.cycle_count, payload.serial_number, payload.device_name, payload.weight, payload.discharge_minimum_voltage, payload.charging_minimum_voltage, payload.resting_minimum_voltage, payload.charging_maximum_voltage, payload.cells_in_series, payload.discharge_maximum_current, payload.discharge_maximum_burst_current, payload.manufacture_date);
+                    break;
+                }
+                case MAVLINK_MSG_ID_FUEL_STATUS: {
+                    mavlink_fuel_status_t payload;
+                    mavlink_msg_fuel_status_decode(&msg, &payload);
+                    mavlink_msg_fuel_status_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.id, payload.maximum_fuel, payload.consumed_fuel, payload.remaining_fuel, payload.percent_remaining, payload.flow_rate, payload.temperature, payload.fuel_type);
+                    mavlink_msg_fuel_status_send(MAVLINK_COMM_0, payload.id, payload.maximum_fuel, payload.consumed_fuel, payload.remaining_fuel, payload.percent_remaining, payload.flow_rate, payload.temperature, payload.fuel_type);
+                    break;
+                }
+                case MAVLINK_MSG_ID_BATTERY_INFO: {
+                    mavlink_battery_info_t payload;
+                    mavlink_msg_battery_info_decode(&msg, &payload);
+                    mavlink_msg_battery_info_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.id, payload.battery_function, payload.type, payload.state_of_health, payload.cells_in_series, payload.cycle_count, payload.weight, payload.discharge_minimum_voltage, payload.charging_minimum_voltage, payload.resting_minimum_voltage, payload.charging_maximum_voltage, payload.charging_maximum_current, payload.nominal_voltage, payload.discharge_maximum_current, payload.discharge_maximum_burst_current, payload.design_capacity, payload.full_charge_capacity, payload.manufacture_date, payload.serial_number, payload.name);
+                    mavlink_msg_battery_info_send(MAVLINK_COMM_0, payload.id, payload.battery_function, payload.type, payload.state_of_health, payload.cells_in_series, payload.cycle_count, payload.weight, payload.discharge_minimum_voltage, payload.charging_minimum_voltage, payload.resting_minimum_voltage, payload.charging_maximum_voltage, payload.charging_maximum_current, payload.nominal_voltage, payload.discharge_maximum_current, payload.discharge_maximum_burst_current, payload.design_capacity, payload.full_charge_capacity, payload.manufacture_date, payload.serial_number, payload.name);
+                    break;
+                }
+                case MAVLINK_MSG_ID_GENERATOR_STATUS: {
+                    mavlink_generator_status_t payload;
+                    mavlink_msg_generator_status_decode(&msg, &payload);
+                    mavlink_msg_generator_status_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.status, payload.generator_speed, payload.battery_current, payload.load_current, payload.power_generated, payload.bus_voltage, payload.rectifier_temperature, payload.bat_current_setpoint, payload.generator_temperature, payload.runtime, payload.time_until_maintenance);
+                    mavlink_msg_generator_status_send(MAVLINK_COMM_0, payload.status, payload.generator_speed, payload.battery_current, payload.load_current, payload.power_generated, payload.bus_voltage, payload.rectifier_temperature, payload.bat_current_setpoint, payload.generator_temperature, payload.runtime, payload.time_until_maintenance);
+                    break;
+                }
+                case MAVLINK_MSG_ID_ACTUATOR_OUTPUT_STATUS: {
+                    mavlink_actuator_output_status_t payload;
+                    mavlink_msg_actuator_output_status_decode(&msg, &payload);
+                    mavlink_msg_actuator_output_status_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.active, payload.actuator);
+                    mavlink_msg_actuator_output_status_send(MAVLINK_COMM_0, payload.time_usec, payload.active, payload.actuator);
+                    break;
+                }
+                case MAVLINK_MSG_ID_TIME_ESTIMATE_TO_TARGET: {
+                    mavlink_time_estimate_to_target_t payload;
+                    mavlink_msg_time_estimate_to_target_decode(&msg, &payload);
+                    mavlink_msg_time_estimate_to_target_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.safe_return, payload.land, payload.mission_next_item, payload.mission_end, payload.commanded_action);
+                    mavlink_msg_time_estimate_to_target_send(MAVLINK_COMM_0, payload.safe_return, payload.land, payload.mission_next_item, payload.mission_end, payload.commanded_action);
+                    break;
+                }
+                case MAVLINK_MSG_ID_TUNNEL: {
+                    mavlink_tunnel_t payload;
+                    mavlink_msg_tunnel_decode(&msg, &payload);
+                    mavlink_msg_tunnel_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.payload_type, payload.payload_length, payload.payload);
+                    mavlink_msg_tunnel_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.payload_type, payload.payload_length, payload.payload);
+                    break;
+                }
+                case MAVLINK_MSG_ID_CAN_FRAME: {
+                    mavlink_can_frame_t payload;
+                    mavlink_msg_can_frame_decode(&msg, &payload);
+                    mavlink_msg_can_frame_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.bus, payload.len, payload.id, payload.data);
+                    mavlink_msg_can_frame_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.bus, payload.len, payload.id, payload.data);
+                    break;
+                }
+                case MAVLINK_MSG_ID_ONBOARD_COMPUTER_STATUS: {
+                    mavlink_onboard_computer_status_t payload;
+                    mavlink_msg_onboard_computer_status_decode(&msg, &payload);
+                    mavlink_msg_onboard_computer_status_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.uptime, payload.type, payload.cpu_cores, payload.cpu_combined, payload.gpu_cores, payload.gpu_combined, payload.temperature_board, payload.temperature_core, payload.fan_speed, payload.ram_usage, payload.ram_total, payload.storage_type, payload.storage_usage, payload.storage_total, payload.link_type, payload.link_tx_rate, payload.link_rx_rate, payload.link_tx_max, payload.link_rx_max);
+                    mavlink_msg_onboard_computer_status_send(MAVLINK_COMM_0, payload.time_usec, payload.uptime, payload.type, payload.cpu_cores, payload.cpu_combined, payload.gpu_cores, payload.gpu_combined, payload.temperature_board, payload.temperature_core, payload.fan_speed, payload.ram_usage, payload.ram_total, payload.storage_type, payload.storage_usage, payload.storage_total, payload.link_type, payload.link_tx_rate, payload.link_rx_rate, payload.link_tx_max, payload.link_rx_max);
+                    break;
+                }
+                case MAVLINK_MSG_ID_COMPONENT_INFORMATION: {
+                    mavlink_component_information_t payload;
+                    mavlink_msg_component_information_decode(&msg, &payload);
+                    mavlink_msg_component_information_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.general_metadata_file_crc, payload.general_metadata_uri, payload.peripherals_metadata_file_crc, payload.peripherals_metadata_uri);
+                    mavlink_msg_component_information_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.general_metadata_file_crc, payload.general_metadata_uri, payload.peripherals_metadata_file_crc, payload.peripherals_metadata_uri);
+                    break;
+                }
+                case MAVLINK_MSG_ID_COMPONENT_INFORMATION_BASIC: {
+                    mavlink_component_information_basic_t payload;
+                    mavlink_msg_component_information_basic_decode(&msg, &payload);
+                    mavlink_msg_component_information_basic_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.capabilities, payload.time_manufacture_s, payload.vendor_name, payload.model_name, payload.software_version, payload.hardware_version, payload.serial_number);
+                    mavlink_msg_component_information_basic_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.capabilities, payload.time_manufacture_s, payload.vendor_name, payload.model_name, payload.software_version, payload.hardware_version, payload.serial_number);
+                    break;
+                }
+                case MAVLINK_MSG_ID_COMPONENT_METADATA: {
+                    mavlink_component_metadata_t payload;
+                    mavlink_msg_component_metadata_decode(&msg, &payload);
+                    mavlink_msg_component_metadata_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_boot_ms, payload.file_crc, payload.uri);
+                    mavlink_msg_component_metadata_send(MAVLINK_COMM_0, payload.time_boot_ms, payload.file_crc, payload.uri);
+                    break;
+                }
+                case MAVLINK_MSG_ID_PLAY_TUNE_V2: {
+                    mavlink_play_tune_v2_t payload;
+                    mavlink_msg_play_tune_v2_decode(&msg, &payload);
+                    mavlink_msg_play_tune_v2_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.format, payload.tune);
+                    mavlink_msg_play_tune_v2_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.format, payload.tune);
+                    break;
+                }
+                case MAVLINK_MSG_ID_SUPPORTED_TUNES: {
+                    mavlink_supported_tunes_t payload;
+                    mavlink_msg_supported_tunes_decode(&msg, &payload);
+                    mavlink_msg_supported_tunes_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.format);
+                    mavlink_msg_supported_tunes_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.format);
+                    break;
+                }
+                case MAVLINK_MSG_ID_EVENT: {
+                    mavlink_event_t payload;
+                    mavlink_msg_event_decode(&msg, &payload);
+                    mavlink_msg_event_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.destination_component, payload.destination_system, payload.id, payload.event_time_boot_ms, payload.sequence, payload.log_levels, payload.arguments);
+                    mavlink_msg_event_send(MAVLINK_COMM_0, payload.destination_component, payload.destination_system, payload.id, payload.event_time_boot_ms, payload.sequence, payload.log_levels, payload.arguments);
+                    break;
+                }
+                case MAVLINK_MSG_ID_CURRENT_EVENT_SEQUENCE: {
+                    mavlink_current_event_sequence_t payload;
+                    mavlink_msg_current_event_sequence_decode(&msg, &payload);
+                    mavlink_msg_current_event_sequence_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.sequence, payload.flags);
+                    mavlink_msg_current_event_sequence_send(MAVLINK_COMM_0, payload.sequence, payload.flags);
+                    break;
+                }
+                case MAVLINK_MSG_ID_REQUEST_EVENT: {
+                    mavlink_request_event_t payload;
+                    mavlink_msg_request_event_decode(&msg, &payload);
+                    mavlink_msg_request_event_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.first_sequence, payload.last_sequence);
+                    mavlink_msg_request_event_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.first_sequence, payload.last_sequence);
+                    break;
+                }
+                case MAVLINK_MSG_ID_RESPONSE_EVENT_ERROR: {
+                    mavlink_response_event_error_t payload;
+                    mavlink_msg_response_event_error_decode(&msg, &payload);
+                    mavlink_msg_response_event_error_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.sequence, payload.sequence_oldest_available, payload.reason);
+                    mavlink_msg_response_event_error_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.sequence, payload.sequence_oldest_available, payload.reason);
+                    break;
+                }
+                case MAVLINK_MSG_ID_AVAILABLE_MODES: {
+                    mavlink_available_modes_t payload;
+                    mavlink_msg_available_modes_decode(&msg, &payload);
+                    mavlink_msg_available_modes_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.number_modes, payload.mode_index, payload.standard_mode, payload.custom_mode, payload.properties, payload.mode_name);
+                    mavlink_msg_available_modes_send(MAVLINK_COMM_0, payload.number_modes, payload.mode_index, payload.standard_mode, payload.custom_mode, payload.properties, payload.mode_name);
+                    break;
+                }
+                case MAVLINK_MSG_ID_CURRENT_MODE: {
+                    mavlink_current_mode_t payload;
+                    mavlink_msg_current_mode_decode(&msg, &payload);
+                    mavlink_msg_current_mode_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.standard_mode, payload.custom_mode, payload.intended_custom_mode);
+                    mavlink_msg_current_mode_send(MAVLINK_COMM_0, payload.standard_mode, payload.custom_mode, payload.intended_custom_mode);
+                    break;
+                }
+                case MAVLINK_MSG_ID_AVAILABLE_MODES_MONITOR: {
+                    mavlink_available_modes_monitor_t payload;
+                    mavlink_msg_available_modes_monitor_decode(&msg, &payload);
+                    mavlink_msg_available_modes_monitor_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.seq);
+                    mavlink_msg_available_modes_monitor_send(MAVLINK_COMM_0, payload.seq);
+                    break;
+                }
+                case MAVLINK_MSG_ID_ILLUMINATOR_STATUS: {
+                    mavlink_illuminator_status_t payload;
+                    mavlink_msg_illuminator_status_decode(&msg, &payload);
+                    mavlink_msg_illuminator_status_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.uptime_ms, payload.enable, payload.mode_bitmask, payload.error_status, payload.mode, payload.brightness, payload.strobe_period, payload.strobe_duty_cycle, payload.temp_c, payload.min_strobe_period, payload.max_strobe_period);
+                    mavlink_msg_illuminator_status_send(MAVLINK_COMM_0, payload.uptime_ms, payload.enable, payload.mode_bitmask, payload.error_status, payload.mode, payload.brightness, payload.strobe_period, payload.strobe_duty_cycle, payload.temp_c, payload.min_strobe_period, payload.max_strobe_period);
+                    break;
+                }
+                case MAVLINK_MSG_ID_CANFD_FRAME: {
+                    mavlink_canfd_frame_t payload;
+                    mavlink_msg_canfd_frame_decode(&msg, &payload);
+                    mavlink_msg_canfd_frame_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.bus, payload.len, payload.id, payload.data);
+                    mavlink_msg_canfd_frame_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.bus, payload.len, payload.id, payload.data);
+                    break;
+                }
+                case MAVLINK_MSG_ID_CAN_FILTER_MODIFY: {
+                    mavlink_can_filter_modify_t payload;
+                    mavlink_msg_can_filter_modify_decode(&msg, &payload);
+                    mavlink_msg_can_filter_modify_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.bus, payload.operation, payload.num_ids, payload.ids);
+                    mavlink_msg_can_filter_modify_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.bus, payload.operation, payload.num_ids, payload.ids);
+                    break;
+                }
+                case MAVLINK_MSG_ID_WHEEL_DISTANCE: {
+                    mavlink_wheel_distance_t payload;
+                    mavlink_msg_wheel_distance_decode(&msg, &payload);
+                    mavlink_msg_wheel_distance_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.count, payload.distance);
+                    mavlink_msg_wheel_distance_send(MAVLINK_COMM_0, payload.time_usec, payload.count, payload.distance);
+                    break;
+                }
+                case MAVLINK_MSG_ID_WINCH_STATUS: {
+                    mavlink_winch_status_t payload;
+                    mavlink_msg_winch_status_decode(&msg, &payload);
+                    mavlink_msg_winch_status_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.time_usec, payload.line_length, payload.speed, payload.tension, payload.voltage, payload.current, payload.temperature, payload.status);
+                    mavlink_msg_winch_status_send(MAVLINK_COMM_0, payload.time_usec, payload.line_length, payload.speed, payload.tension, payload.voltage, payload.current, payload.temperature, payload.status);
+                    break;
+                }
+                case MAVLINK_MSG_ID_OPEN_DRONE_ID_BASIC_ID: {
+                    mavlink_open_drone_id_basic_id_t payload;
+                    mavlink_msg_open_drone_id_basic_id_decode(&msg, &payload);
+                    mavlink_msg_open_drone_id_basic_id_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.id_or_mac, payload.id_type, payload.ua_type, payload.uas_id);
+                    mavlink_msg_open_drone_id_basic_id_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.id_or_mac, payload.id_type, payload.ua_type, payload.uas_id);
+                    break;
+                }
+                case MAVLINK_MSG_ID_OPEN_DRONE_ID_LOCATION: {
+                    mavlink_open_drone_id_location_t payload;
+                    mavlink_msg_open_drone_id_location_decode(&msg, &payload);
+                    mavlink_msg_open_drone_id_location_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.id_or_mac, payload.status, payload.direction, payload.speed_horizontal, payload.speed_vertical, payload.latitude, payload.longitude, payload.altitude_barometric, payload.altitude_geodetic, payload.height_reference, payload.height, payload.horizontal_accuracy, payload.vertical_accuracy, payload.barometer_accuracy, payload.speed_accuracy, payload.timestamp, payload.timestamp_accuracy);
+                    mavlink_msg_open_drone_id_location_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.id_or_mac, payload.status, payload.direction, payload.speed_horizontal, payload.speed_vertical, payload.latitude, payload.longitude, payload.altitude_barometric, payload.altitude_geodetic, payload.height_reference, payload.height, payload.horizontal_accuracy, payload.vertical_accuracy, payload.barometer_accuracy, payload.speed_accuracy, payload.timestamp, payload.timestamp_accuracy);
+                    break;
+                }
+                case MAVLINK_MSG_ID_OPEN_DRONE_ID_AUTHENTICATION: {
+                    mavlink_open_drone_id_authentication_t payload;
+                    mavlink_msg_open_drone_id_authentication_decode(&msg, &payload);
+                    mavlink_msg_open_drone_id_authentication_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.id_or_mac, payload.authentication_type, payload.data_page, payload.last_page_index, payload.length, payload.timestamp, payload.authentication_data);
+                    mavlink_msg_open_drone_id_authentication_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.id_or_mac, payload.authentication_type, payload.data_page, payload.last_page_index, payload.length, payload.timestamp, payload.authentication_data);
+                    break;
+                }
+                case MAVLINK_MSG_ID_OPEN_DRONE_ID_SELF_ID: {
+                    mavlink_open_drone_id_self_id_t payload;
+                    mavlink_msg_open_drone_id_self_id_decode(&msg, &payload);
+                    mavlink_msg_open_drone_id_self_id_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.id_or_mac, payload.description_type, payload.description);
+                    mavlink_msg_open_drone_id_self_id_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.id_or_mac, payload.description_type, payload.description);
+                    break;
+                }
+                case MAVLINK_MSG_ID_OPEN_DRONE_ID_SYSTEM: {
+                    mavlink_open_drone_id_system_t payload;
+                    mavlink_msg_open_drone_id_system_decode(&msg, &payload);
+                    mavlink_msg_open_drone_id_system_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.id_or_mac, payload.operator_location_type, payload.classification_type, payload.operator_latitude, payload.operator_longitude, payload.area_count, payload.area_radius, payload.area_ceiling, payload.area_floor, payload.category_eu, payload.class_eu, payload.operator_altitude_geo, payload.timestamp);
+                    mavlink_msg_open_drone_id_system_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.id_or_mac, payload.operator_location_type, payload.classification_type, payload.operator_latitude, payload.operator_longitude, payload.area_count, payload.area_radius, payload.area_ceiling, payload.area_floor, payload.category_eu, payload.class_eu, payload.operator_altitude_geo, payload.timestamp);
+                    break;
+                }
+                case MAVLINK_MSG_ID_OPEN_DRONE_ID_OPERATOR_ID: {
+                    mavlink_open_drone_id_operator_id_t payload;
+                    mavlink_msg_open_drone_id_operator_id_decode(&msg, &payload);
+                    mavlink_msg_open_drone_id_operator_id_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.id_or_mac, payload.operator_id_type, payload.operator_id);
+                    mavlink_msg_open_drone_id_operator_id_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.id_or_mac, payload.operator_id_type, payload.operator_id);
+                    break;
+                }
+                case MAVLINK_MSG_ID_OPEN_DRONE_ID_MESSAGE_PACK: {
+                    mavlink_open_drone_id_message_pack_t payload;
+                    mavlink_msg_open_drone_id_message_pack_decode(&msg, &payload);
+                    mavlink_msg_open_drone_id_message_pack_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.id_or_mac, payload.single_message_size, payload.msg_pack_size, payload.messages);
+                    mavlink_msg_open_drone_id_message_pack_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.id_or_mac, payload.single_message_size, payload.msg_pack_size, payload.messages);
+                    break;
+                }
+                case MAVLINK_MSG_ID_OPEN_DRONE_ID_ARM_STATUS: {
+                    mavlink_open_drone_id_arm_status_t payload;
+                    mavlink_msg_open_drone_id_arm_status_decode(&msg, &payload);
+                    mavlink_msg_open_drone_id_arm_status_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.status, payload.error);
+                    mavlink_msg_open_drone_id_arm_status_send(MAVLINK_COMM_0, payload.status, payload.error);
+                    break;
+                }
+                case MAVLINK_MSG_ID_OPEN_DRONE_ID_SYSTEM_UPDATE: {
+                    mavlink_open_drone_id_system_update_t payload;
+                    mavlink_msg_open_drone_id_system_update_decode(&msg, &payload);
+                    mavlink_msg_open_drone_id_system_update_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.target_system, payload.target_component, payload.operator_latitude, payload.operator_longitude, payload.operator_altitude_geo, payload.timestamp);
+                    mavlink_msg_open_drone_id_system_update_send(MAVLINK_COMM_0, payload.target_system, payload.target_component, payload.operator_latitude, payload.operator_longitude, payload.operator_altitude_geo, payload.timestamp);
+                    break;
+                }
+                case MAVLINK_MSG_ID_HYGROMETER_SENSOR: {
+                    mavlink_hygrometer_sensor_t payload;
+                    mavlink_msg_hygrometer_sensor_decode(&msg, &payload);
+                    mavlink_msg_hygrometer_sensor_pack_chan(1, 2, MAVLINK_COMM_0, &msg, payload.id, payload.temperature, payload.humidity);
+                    mavlink_msg_hygrometer_sensor_send(MAVLINK_COMM_0, payload.id, payload.temperature, payload.humidity);
+                    break;
+                }
+                default: { // generic fallback
+                    printf("%s", "Unkown message type\n");
+                }
+            }
+        }   
+        // printf("[CSE569] Parsed a MAVLink message\n");
+    }
+
+    return 0;
+}
+
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <input_file>\n", argv[0]);
+        return 1;
+    }
+
+    FILE *fp = fopen(argv[1], "rb");
+    if (!fp) {
+        perror("fopen");
+        return 1;
+    }
+
+    uint8_t buffer[BUFFER_SIZE];
+    size_t len = fread(buffer, 1, BUFFER_SIZE, fp);
+    fclose(fp);
+
+    LLVMFuzzerTestOneInput(buffer, len);
+
+    return 0;
+}
+
